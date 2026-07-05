@@ -1,3 +1,4 @@
+"""Model Performans sayfasi: layout + callback'ler."""
 import os
 import io
 import json
@@ -22,10 +23,15 @@ from core.constants import (DEMO_PATH, LIVE_DATA_PATH, SHAP_PKL, BENCHMARK_METRI
 from core.state import (MODELS, THRESHOLDS, SCALER, TEST_DATA, ALL_METRICS, FEATURE_COLS,
                         LIVE_DATA, SHAP_DATA, get_tree_explainer, best_model)
 
+# Model performans figürleri (ROC top-10 + PR + confusion) tek sefer hesaplanıp önbelleğe alınır.
 _PERF_FIGS_CACHE = None
 
 
 def build_performance_figures(top_n=10):
+    """En iyi N modelin (AUC-PR sıralı) ROC + PR eğrilerini ve ilk 3 modelin
+    confusion matrislerini Ψ üzerinde bir kez hesaplar, önbelleğe alır. Ağır işlem
+    (~3-12 sn) olduğundan her ziyarette tekrar edilmez; ilk seferde spinner çıkar.
+    PR eğrisi öne çıkar çünkü birincil ölçüt AUC-PR'dır."""
     global _PERF_FIGS_CACHE
     if _PERF_FIGS_CACHE is not None:
         return _PERF_FIGS_CACHE
@@ -67,7 +73,7 @@ def build_performance_figures(top_n=10):
                                     line=dict(color=c, width=2)))
     fig_roc.update_layout(**PLT_LAYOUT, height=420, title=f"ROC Eğrileri (en iyi {len(top)})",
                           xaxis_title="FPR", yaxis_title="TPR")
-    fig_pr.update_layout(**PLT_LAYOUT, height=420, title=f"PR Eğrileri (en iyi {len(top)}) · birincil ölçüt",
+    fig_pr.update_layout(**PLT_LAYOUT, height=420, title=f"PR Eğrileri (en iyi {len(top)}) — birincil ölçüt",
                          xaxis_title="Recall", yaxis_title="Precision")
 
     conf_cols = []
@@ -120,6 +126,12 @@ def page_performance():
             html.Div(f"{CANONICAL_MODEL_COUNT} kanonik modelin karşılaştırmalı analizi "
                      f"({n_metric} Ψ-ölçümlü + {len(ESA_ADB_BASELINES)} ESA-ADB literatür)",
                      className="page-subtitle")]),
+        html.Div(className="info-box", style={"marginBottom": "16px"},
+                 children=f"Kanonik {CANONICAL_MODEL_COUNT} model: {len(SUP_MODEL_NAMES)} gözetimli + "
+                          f"{len(UNSUP_MODEL_NAMES)} gözetimsiz + {len(DEEP_SEQ_MODELS)} derin sıralı "
+                          f"(ham sinyal) + {len(ESA_ADB_BASELINES)} ESA-ADB literatür baseline. Aşağıdaki "
+                          f"tablo resmi Ψ test setinde ölçülen {n_metric} modeli gösterir; ESA-ADB "
+                          f"baseline'ları ayrı panelde referans olarak listelenir."),
         html.Div(className="panel mb-4", children=[
             html.Div(className="panel-title", children=[icon("mdi:table", 16),
                      f"Metrik Tablosu ({n_metric} model, AUC_PR sıralı)"]),
@@ -175,6 +187,8 @@ def page_performance():
 
 @callback(Output("performance-roc", "children"), Input("current-page", "data"))
 def load_performance_roc(page_id):
+    """Model Performans sayfasi acildiginda agir ROC hesabini (onbellekli) yükler;
+    dcc.Loading sayesinde hesap suresince spinner gosterilir."""
     if page_id != "performance":
         return no_update
     return build_performance_figures()

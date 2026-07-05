@@ -1,24 +1,34 @@
+"""Kenar çubuğu (sidebar), navigasyon bileşenleri ve gizli referanslar.
+
+Navigasyon yapısı tek noktada tanımlıdır; yeni bir sayfa eklendiğinde yalnızca
+buradaki listeye bir `nav_item` eklemek yeterlidir.
+"""
 from dash import html
 
 from utils.ui import icon
 
 
 def nav_item(ic, text, page_id):
+    """Tıklanabilir bir navigasyon butonu (pattern-matching id ile)."""
     return html.Button(id={"type": "nav", "page": page_id}, n_clicks=0,
                        className="nav-item", children=[icon(ic, 18), html.Span(text)])
 
 
 def nav_subgroup(text):
+    """Geliştirici menüsü içinde küçük alt-grup başlığı."""
     return html.Div(text, style={"fontSize": "9px", "letterSpacing": "1.5px", "color": "#94A3B8",
                                  "fontWeight": "600", "padding": "10px 16px 2px"})
 
 
+# Üst bar kaldırıldı (sade tasarım). Canlı izleme callback'i global-live-dot'a
+# yazdığı için onu gizli bir öğe olarak tutuyoruz (callback sözleşmesi bozulmasın).
 hidden_refs = html.Div(style={"display": "none"}, children=[
     html.Span(id="global-live-dot"),
 ])
 
 
 def build_sidebar():
+    """Sol kenar çubuğunu (logo + navigasyon) oluşturur."""
     return html.Div(className="sidebar", children=[
         html.Div(className="sidebar-logo", children=[
             html.Div([icon("mdi:satellite-variant", 26, "#06B6D4")], className="logo-icon"),

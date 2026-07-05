@@ -1,3 +1,10 @@
+"""
+Veri Yükleme Modülü
+====================
+
+Uydu telemetri verilerinin farklı kaynaklardan yüklenmesi ve
+ilk doğrulama işlemlerini gerçekleştirir.
+"""
 
 import os
 import pandas as pd
@@ -6,10 +13,23 @@ from typing import Optional, Union, List
 
 
 class TelemetryDataLoader:
+    """
+    Uydu telemetri verilerini yüklemek ve doğrulamak için kullanılan sınıf.
+
+    Desteklenen formatlar: CSV, Parquet, JSON, HDF5
+
+    Attributes:
+        data_path (str): Veri dosyalarının bulunduğu dizin yolu.
+        data (pd.DataFrame): Yüklenen veri seti.
+    """
 
     SUPPORTED_FORMATS = ['.csv', '.parquet', '.json', '.h5', '.hdf5', '.xlsx']
 
     def __init__(self, data_path: str = "data/raw/"):
+        """
+        Args:
+            data_path (str): Ham veri dosyalarının bulunduğu dizin yolu.
+        """
         self.data_path = data_path
         self.data: Optional[pd.DataFrame] = None
 
@@ -19,6 +39,22 @@ class TelemetryDataLoader:
         file_format: str = "csv",
         **kwargs
     ) -> pd.DataFrame:
+        """
+        Belirtilen dosyadan veri yükler.
+
+        Args:
+            filename (str, optional): Yüklenecek dosya adı.
+                None ise dizindeki ilk uygun dosyayı yükler.
+            file_format (str): Dosya formatı ('csv', 'parquet', 'json', 'h5').
+            **kwargs: pandas okuma fonksiyonlarına geçirilecek ek parametreler.
+
+        Returns:
+            pd.DataFrame: Yüklenen veri seti.
+
+        Raises:
+            FileNotFoundError: Dosya bulunamadığında.
+            ValueError: Desteklenmeyen format belirtildiğinde.
+        """
         if filename is None:
             filename = self._find_first_file(file_format)
 
@@ -48,6 +84,7 @@ class TelemetryDataLoader:
         return self.data
 
     def _find_first_file(self, file_format: str) -> str:
+        """Dizindeki ilk uygun dosyayı bulur."""
         ext = f".{file_format}" if not file_format.startswith('.') else file_format
 
         for fname in os.listdir(self.data_path):
@@ -59,6 +96,12 @@ class TelemetryDataLoader:
         )
 
     def get_summary(self) -> dict:
+        """
+        Yüklenen verinin özet istatistiklerini döndürür.
+
+        Returns:
+            dict: Veri özeti (satır/sütun sayısı, veri tipleri, eksik veriler vb.)
+        """
         if self.data is None:
             raise ValueError("Henüz veri yüklenmedi. Önce load_data() çağırın.")
 
@@ -79,6 +122,15 @@ class TelemetryDataLoader:
         return summary
 
     def validate_data(self, required_columns: Optional[List[str]] = None) -> bool:
+        """
+        Yüklenen verinin geçerliliğini kontrol eder.
+
+        Args:
+            required_columns (list, optional): Olması gereken sütun isimleri.
+
+        Returns:
+            bool: Veri geçerliyse True.
+        """
         if self.data is None:
             raise ValueError("Henüz veri yüklenmedi.")
 

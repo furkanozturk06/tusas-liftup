@@ -14,6 +14,11 @@
             "Accuracy": 0.9376181474480151,
             "F1": 0.8583690987124464,
             "AUC-ROC": 0.9701752893124576
+        },
+        "MLP": {
+            "Accuracy": 0.945179584120983,
+            "F1": 0.8796680497925311,
+            "AUC-ROC": 0.9763444520081688
         }
     },
     "single_removal": [
@@ -42,6 +47,14 @@
             "delta_auc": -0.0012976514635808511
         },
         {
+            "removed_feature": "mean",
+            "remaining_count": 17,
+            "model": "MLP",
+            "F1": 0.8045112781954887,
+            "AUC-ROC": 0.9775144656228727,
+            "delta_auc": 0.0011700136147039242
+        },
+        {
             "removed_feature": "var",
             "remaining_count": 17,
             "model": "RandomForest",
@@ -64,6 +77,14 @@
             "F1": 0.8583690987124464,
             "AUC-ROC": 0.9689627297481279,
             "delta_auc": -0.0012125595643296405
+        },
+        {
+            "removed_feature": "var",
+            "remaining_count": 17,
+            "model": "MLP",
+            "F1": 0.8512396694214877,
+            "AUC-ROC": 0.972962049012934,
+            "delta_auc": -0.0033824029952347345
         },
         {
             "removed_feature": "std",
@@ -90,6 +111,14 @@
             "delta_auc": -0.0017018379850238796
         },
         {
+            "removed_feature": "std",
+            "remaining_count": 17,
+            "model": "MLP",
+            "F1": 0.9308755760368663,
+            "AUC-ROC": 0.9801735874744724,
+            "delta_auc": 0.0038291354663035904
+        },
+        {
             "removed_feature": "kurtosis",
             "remaining_count": 17,
             "model": "RandomForest",
@@ -112,6 +141,14 @@
             "F1": 0.8547008547008547,
             "AUC-ROC": 0.9690690946221919,
             "delta_auc": -0.0011061946902656272
+        },
+        {
+            "removed_feature": "kurtosis",
+            "remaining_count": 17,
+            "model": "MLP",
+            "F1": 0.8412698412698413,
+            "AUC-ROC": 0.9833432607215793,
+            "delta_auc": 0.00699880871341052
         },
         {
             "removed_feature": "skew",
@@ -138,6 +175,14 @@
             "delta_auc": -0.0038078624914907877
         },
         {
+            "removed_feature": "skew",
+            "remaining_count": 17,
+            "model": "MLP",
+            "F1": 0.8945147679324894,
+            "AUC-ROC": 0.9762380871341049,
+            "delta_auc": -0.00010636487406390227
+        },
+        {
             "removed_feature": "n_peaks",
             "remaining_count": 17,
             "model": "RandomForest",
@@ -160,6 +205,14 @@
             "F1": 0.8016877637130801,
             "AUC-ROC": 0.9600493533015657,
             "delta_auc": -0.010125936010891845
+        },
+        {
+            "removed_feature": "n_peaks",
+            "remaining_count": 17,
+            "model": "MLP",
+            "F1": 0.8786610878661087,
+            "AUC-ROC": 0.9801097685500341,
+            "delta_auc": 0.0037653165418652934
         },
         {
             "removed_feature": "duration",
@@ -186,6 +239,14 @@
             "delta_auc": -0.004360959836623657
         },
         {
+            "removed_feature": "duration",
+            "remaining_count": 17,
+            "model": "MLP",
+            "F1": 0.7725631768953068,
+            "AUC-ROC": 0.9745787950987066,
+            "delta_auc": -0.0017656569094621766
+        },
+        {
             "removed_feature": "len",
             "remaining_count": 17,
             "model": "RandomForest",
@@ -208,6 +269,14 @@
             "F1": 0.8275862068965517,
             "AUC-ROC": 0.9551991150442478,
             "delta_auc": -0.014976174268209741
+        },
+        {
+            "removed_feature": "len",
+            "remaining_count": 17,
+            "model": "MLP",
+            "F1": 0.8823529411764706,
+            "AUC-ROC": 0.9831518039482641,
+            "delta_auc": 0.006807351940095296
         },
         {
             "removed_feature": "gaps_squared",
@@ -234,6 +303,14 @@
             "delta_auc": -0.001361470388019148
         },
         {
+            "removed_feature": "gaps_squared",
+            "remaining_count": 17,
+            "model": "MLP",
+            "F1": 0.779783393501805,
+            "AUC-ROC": 0.9819392443839347,
+            "delta_auc": 0.005594792375765878
+        },
+        {
             "removed_feature": "len_weighted",
             "remaining_count": 17,
             "model": "RandomForest",
@@ -256,6 +333,14 @@
             "F1": 0.8595744680851064,
             "AUC-ROC": 0.9650485023825731,
             "delta_auc": -0.0051267869298844415
+        },
+        {
+            "removed_feature": "len_weighted",
+            "remaining_count": 17,
+            "model": "MLP",
+            "F1": 0.8869565217391304,
+            "AUC-ROC": 0.980428863172226,
+            "delta_auc": 0.004084411164057222
         },
         {
             "removed_feature": "var_div_duration",
@@ -282,6 +367,14 @@
             "delta_auc": -0.00046800544588154747
         },
         {
+            "removed_feature": "var_div_duration",
+            "remaining_count": 17,
+            "model": "MLP",
+            "F1": 0.8869565217391304,
+            "AUC-ROC": 0.9825561606535058,
+            "delta_auc": 0.006211708645337044
+        },
+        {
             "removed_feature": "var_div_len",
             "remaining_count": 17,
             "model": "RandomForest",
@@ -304,6 +397,14 @@
             "F1": 0.8583690987124464,
             "AUC-ROC": 0.969388189244384,
             "delta_auc": -0.0007871000680735873
+        },
+        {
+            "removed_feature": "var_div_len",
+            "remaining_count": 17,
+            "model": "MLP",
+            "F1": 0.864406779661017,
+            "AUC-ROC": 0.9759189925119128,
+            "delta_auc": -0.00042545949625594215
         },
         {
             "removed_feature": "smooth10_n_peaks",
@@ -330,6 +431,14 @@
             "delta_auc": 0.014146528250510437
         },
         {
+            "removed_feature": "smooth10_n_peaks",
+            "remaining_count": 17,
+            "model": "MLP",
+            "F1": 0.8470588235294118,
+            "AUC-ROC": 0.987789312457454,
+            "delta_auc": 0.011444860449285277
+        },
+        {
             "removed_feature": "smooth20_n_peaks",
             "remaining_count": 17,
             "model": "RandomForest",
@@ -352,6 +461,14 @@
             "F1": 0.8583690987124464,
             "AUC-ROC": 0.9701965622872704,
             "delta_auc": 2.127297481280266e-05
+        },
+        {
+            "removed_feature": "smooth20_n_peaks",
+            "remaining_count": 17,
+            "model": "MLP",
+            "F1": 0.8630705394190872,
+            "AUC-ROC": 0.9771528250510552,
+            "delta_auc": 0.00080837304288639
         },
         {
             "removed_feature": "diff_peaks",
@@ -378,6 +495,14 @@
             "delta_auc": -0.004520507147719677
         },
         {
+            "removed_feature": "diff_peaks",
+            "remaining_count": 17,
+            "model": "MLP",
+            "F1": 0.9051724137931034,
+            "AUC-ROC": 0.9811308713410483,
+            "delta_auc": 0.004786419332879488
+        },
+        {
             "removed_feature": "diff2_peaks",
             "remaining_count": 17,
             "model": "RandomForest",
@@ -400,6 +525,14 @@
             "F1": 0.8296943231441049,
             "AUC-ROC": 0.9489023144996596,
             "delta_auc": -0.021272974812797996
+        },
+        {
+            "removed_feature": "diff2_peaks",
+            "remaining_count": 17,
+            "model": "MLP",
+            "F1": 0.8761061946902655,
+            "AUC-ROC": 0.9729195030633084,
+            "delta_auc": -0.00342494894486034
         },
         {
             "removed_feature": "diff_var",
@@ -426,6 +559,14 @@
             "delta_auc": 0.00155292716133415
         },
         {
+            "removed_feature": "diff_var",
+            "remaining_count": 17,
+            "model": "MLP",
+            "F1": 0.7954545454545454,
+            "AUC-ROC": 0.9732385976855003,
+            "delta_auc": -0.003105854322668522
+        },
+        {
             "removed_feature": "diff2_var",
             "remaining_count": 17,
             "model": "RandomForest",
@@ -448,6 +589,14 @@
             "F1": 0.8695652173913043,
             "AUC-ROC": 0.9746851599727705,
             "delta_auc": 0.004509870660312942
+        },
+        {
+            "removed_feature": "diff2_var",
+            "remaining_count": 17,
+            "model": "MLP",
+            "F1": 0.8728813559322034,
+            "AUC-ROC": 0.9826837985023826,
+            "delta_auc": 0.00633934649421386
         }
     ],
     "cumulative": [
@@ -473,6 +622,13 @@
             "AUC-ROC": 0.9688776378488767
         },
         {
+            "num_features": 17,
+            "model": "MLP",
+            "Accuracy": 0.9357277882797732,
+            "F1": 0.859504132231405,
+            "AUC-ROC": 0.977578284547311
+        },
+        {
             "num_features": 16,
             "model": "RandomForest",
             "Accuracy": 0.9376181474480151,
@@ -492,6 +648,13 @@
             "Accuracy": 0.9376181474480151,
             "F1": 0.8583690987124464,
             "AUC-ROC": 0.9689201837985024
+        },
+        {
+            "num_features": 16,
+            "model": "MLP",
+            "Accuracy": 0.9565217391304348,
+            "F1": 0.8986784140969163,
+            "AUC-ROC": 0.9768762763784887
         },
         {
             "num_features": 15,
@@ -515,6 +678,13 @@
             "AUC-ROC": 0.9678778080326752
         },
         {
+            "num_features": 15,
+            "model": "MLP",
+            "Accuracy": 0.8563327032136105,
+            "F1": 0.7397260273972602,
+            "AUC-ROC": 0.9808755956432947
+        },
+        {
             "num_features": 14,
             "model": "RandomForest",
             "Accuracy": 0.9395085066162571,
@@ -534,6 +704,13 @@
             "Accuracy": 0.9357277882797732,
             "F1": 0.853448275862069,
             "AUC-ROC": 0.9675587134104833
+        },
+        {
+            "num_features": 14,
+            "model": "MLP",
+            "Accuracy": 0.947069943289225,
+            "F1": 0.8803418803418803,
+            "AUC-ROC": 0.9864703880190606
         },
         {
             "num_features": 13,
@@ -557,6 +734,13 @@
             "AUC-ROC": 0.9693243703199456
         },
         {
+            "num_features": 13,
+            "model": "MLP",
+            "Accuracy": 0.9168241965973535,
+            "F1": 0.8307692307692308,
+            "AUC-ROC": 0.9859598366235535
+        },
+        {
             "num_features": 12,
             "model": "RandomForest",
             "Accuracy": 0.9621928166351607,
@@ -576,6 +760,13 @@
             "Accuracy": 0.941398865784499,
             "F1": 0.8646288209606987,
             "AUC-ROC": 0.9702816541865215
+        },
+        {
+            "num_features": 12,
+            "model": "MLP",
+            "Accuracy": 0.9603024574669187,
+            "F1": 0.9082969432314411,
+            "AUC-ROC": 0.9814499659632403
         },
         {
             "num_features": 11,
@@ -599,6 +790,13 @@
             "AUC-ROC": 0.96875
         },
         {
+            "num_features": 11,
+            "model": "MLP",
+            "Accuracy": 0.9584120982986768,
+            "F1": 0.9026548672566371,
+            "AUC-ROC": 0.9817690605854323
+        },
+        {
             "num_features": 10,
             "model": "RandomForest",
             "Accuracy": 0.9546313799621928,
@@ -618,6 +816,13 @@
             "Accuracy": 0.9395085066162571,
             "F1": 0.8571428571428571,
             "AUC-ROC": 0.9659632402995235
+        },
+        {
+            "num_features": 10,
+            "model": "MLP",
+            "Accuracy": 0.9489603024574669,
+            "F1": 0.8851063829787233,
+            "AUC-ROC": 0.9842579986385296
         },
         {
             "num_features": 9,
@@ -641,6 +846,13 @@
             "AUC-ROC": 0.9672608917631043
         },
         {
+            "num_features": 9,
+            "model": "MLP",
+            "Accuracy": 0.9262759924385633,
+            "F1": 0.8433734939759037,
+            "AUC-ROC": 0.9811946902654867
+        },
+        {
             "num_features": 8,
             "model": "RandomForest",
             "Accuracy": 0.9527410207939508,
@@ -660,6 +872,13 @@
             "Accuracy": 0.9376181474480151,
             "F1": 0.8506787330316742,
             "AUC-ROC": 0.9707071136827774
+        },
+        {
+            "num_features": 8,
+            "model": "MLP",
+            "Accuracy": 0.9640831758034026,
+            "F1": 0.9147982062780269,
+            "AUC-ROC": 0.9781526548672567
         },
         {
             "num_features": 7,
@@ -683,6 +902,13 @@
             "AUC-ROC": 0.9572200476514635
         },
         {
+            "num_features": 7,
+            "model": "MLP",
+            "Accuracy": 0.947069943289225,
+            "F1": 0.8793103448275862,
+            "AUC-ROC": 0.967494894486045
+        },
+        {
             "num_features": 6,
             "model": "RandomForest",
             "Accuracy": 0.9508506616257089,
@@ -702,6 +928,13 @@
             "Accuracy": 0.9149338374291115,
             "F1": 0.7945205479452054,
             "AUC-ROC": 0.8885934309053778
+        },
+        {
+            "num_features": 6,
+            "model": "MLP",
+            "Accuracy": 0.9149338374291115,
+            "F1": 0.8148148148148148,
+            "AUC-ROC": 0.9442222600408441
         },
         {
             "num_features": 5,
@@ -725,6 +958,13 @@
             "AUC-ROC": 0.8989746426140232
         },
         {
+            "num_features": 5,
+            "model": "MLP",
+            "Accuracy": 0.9073724007561437,
+            "F1": 0.7878787878787878,
+            "AUC-ROC": 0.9196732471068754
+        },
+        {
             "num_features": 4,
             "model": "RandomForest",
             "Accuracy": 0.9224952741020794,
@@ -744,6 +984,13 @@
             "Accuracy": 0.9092627599243857,
             "F1": 0.7876106194690266,
             "AUC-ROC": 0.8890401633764465
+        },
+        {
+            "num_features": 4,
+            "model": "MLP",
+            "Accuracy": 0.9262759924385633,
+            "F1": 0.821917808219178,
+            "AUC-ROC": 0.9050055309734513
         },
         {
             "num_features": 3,
@@ -767,6 +1014,13 @@
             "AUC-ROC": 0.888412610619469
         },
         {
+            "num_features": 3,
+            "model": "MLP",
+            "Accuracy": 0.7674858223062382,
+            "F1": 0.61198738170347,
+            "AUC-ROC": 0.8939223110959835
+        },
+        {
             "num_features": 2,
             "model": "RandomForest",
             "Accuracy": 0.8903591682419659,
@@ -788,6 +1042,13 @@
             "AUC-ROC": 0.8391444009530292
         },
         {
+            "num_features": 2,
+            "model": "MLP",
+            "Accuracy": 0.21361058601134217,
+            "F1": 0.35202492211838005,
+            "AUC-ROC": 0.876574200136147
+        },
+        {
             "num_features": 1,
             "model": "RandomForest",
             "Accuracy": 0.8903591682419659,
@@ -807,6 +1068,13 @@
             "Accuracy": 0.8903591682419659,
             "F1": 0.7542372881355932,
             "AUC-ROC": 0.8529399251191286
+        },
+        {
+            "num_features": 1,
+            "model": "MLP",
+            "Accuracy": 0.21361058601134217,
+            "F1": 0.35202492211838005,
+            "AUC-ROC": 0.14706007488087136
         }
     ],
     "groups": {
@@ -825,6 +1093,11 @@
                 "Accuracy": 0.6843100189035917,
                 "F1": 0.5269121813031161,
                 "AUC-ROC": 0.7531271272974813
+            },
+            "MLP": {
+                "Accuracy": 0.5160680529300568,
+                "F1": 0.42342342342342343,
+                "AUC-ROC": 0.7502127297481279
             }
         },
         "Sadece B": {
@@ -842,6 +1115,11 @@
                 "Accuracy": 0.8922495274102079,
                 "F1": 0.759493670886076,
                 "AUC-ROC": 0.8739788972089857
+            },
+            "MLP": {
+                "Accuracy": 0.3440453686200378,
+                "F1": 0.3858407079646018,
+                "AUC-ROC": 0.8957092409802586
             }
         },
         "Sadece C": {
@@ -859,6 +1137,11 @@
                 "Accuracy": 0.6370510396975425,
                 "F1": 0.48936170212765956,
                 "AUC-ROC": 0.8418141592920354
+            },
+            "MLP": {
+                "Accuracy": 0.47448015122873344,
+                "F1": 0.43724696356275305,
+                "AUC-ROC": 0.891933287950987
             }
         },
         "A+B": {
@@ -876,6 +1159,11 @@
                 "Accuracy": 0.9073724007561437,
                 "F1": 0.7841409691629956,
                 "AUC-ROC": 0.9364469877467665
+            },
+            "MLP": {
+                "Accuracy": 0.9168241965973535,
+                "F1": 0.8035714285714286,
+                "AUC-ROC": 0.9454241831177671
             }
         },
         "A+C": {
@@ -893,6 +1181,11 @@
                 "Accuracy": 0.782608695652174,
                 "F1": 0.6525679758308157,
                 "AUC-ROC": 0.9428288801906057
+            },
+            "MLP": {
+                "Accuracy": 0.7448015122873346,
+                "F1": 0.6153846153846154,
+                "AUC-ROC": 0.9485725833900613
             }
         },
         "B+C": {
@@ -910,6 +1203,11 @@
                 "Accuracy": 0.9111531190926276,
                 "F1": 0.7947598253275109,
                 "AUC-ROC": 0.9001021102791014
+            },
+            "MLP": {
+                "Accuracy": 0.7504725897920604,
+                "F1": 0.6047904191616766,
+                "AUC-ROC": 0.9462431926480599
             }
         },
         "A+B+C (Baseline)": {
@@ -927,6 +1225,11 @@
                 "Accuracy": 0.9338374291115312,
                 "F1": 0.851063829787234,
                 "AUC-ROC": 0.9705582028590878
+            },
+            "MLP": {
+                "Accuracy": 0.9395085066162571,
+                "F1": 0.8688524590163934,
+                "AUC-ROC": 0.9850876446562288
             }
         }
     },
@@ -946,6 +1249,11 @@
                 "Accuracy": 0.9357277882797732,
                 "F1": 0.853448275862069,
                 "AUC-ROC": 0.9663674268209668
+            },
+            "MLP": {
+                "Accuracy": 0.9281663516068053,
+                "F1": 0.8492063492063492,
+                "AUC-ROC": 0.9764508168822328
             }
         },
         "Kurtosis": {
@@ -963,6 +1271,11 @@
                 "Accuracy": 0.9357277882797732,
                 "F1": 0.8547008547008547,
                 "AUC-ROC": 0.9690690946221919
+            },
+            "MLP": {
+                "Accuracy": 0.8185255198487713,
+                "F1": 0.6883116883116883,
+                "AUC-ROC": 0.9693030973451328
             }
         },
         "Variance": {
@@ -980,6 +1293,11 @@
                 "Accuracy": 0.943289224952741,
                 "F1": 0.868421052631579,
                 "AUC-ROC": 0.9728556841388699
+            },
+            "MLP": {
+                "Accuracy": 0.9319470699432892,
+                "F1": 0.8524590163934426,
+                "AUC-ROC": 0.9737278761061946
             }
         },
         "Peaks": {
@@ -997,6 +1315,11 @@
                 "Accuracy": 0.7996219281663516,
                 "F1": 0.6513157894736842,
                 "AUC-ROC": 0.9250765827093261
+            },
+            "MLP": {
+                "Accuracy": 0.6370510396975425,
+                "F1": 0.5339805825242718,
+                "AUC-ROC": 0.9489448604492852
             }
         }
     },
@@ -1004,16 +1327,21 @@
         "critical": [
             "n_peaks",
             "diff2_peaks",
-            "len"
+            "skew",
+            "len",
+            "duration"
         ],
         "removable": [
+            "std",
+            "kurtosis",
             "mean",
+            "var_div_duration",
+            "diff_var",
             "smooth20_n_peaks",
             "diff2_var",
-            "diff_var",
             "smooth10_n_peaks"
         ],
         "optimal_count": 11,
-        "date": "2026-06-14 22:26:31"
+        "date": "2026-06-07 00:31:28"
     }
 }

@@ -1,3 +1,22 @@
+"""
+Sentetik Uydu Telemetri Verisi Ureticisi
+=========================================
+
+ESA OPS-SAT manyetometre ve fotodiyot kanallarini taklit eden
+gercekci sentetik telemetri segmentleri uretir.
+
+Referans kanal profilleri gercek OPSSAT-AD verisinden cikarilmistir.
+
+Kullanim:
+    from src.synthetic_generator import SyntheticTelemetryGenerator
+    gen = SyntheticTelemetryGenerator(seed=42)
+    segments_df = gen.generate(n_segments=500, anomaly_ratio=0.20)
+    segments_df.to_csv("sentetik_segments.csv", index=False)
+
+    # Ardindan feature extraction:
+    from src.feature_engineer import extract_esa_features
+    dataset_df = extract_esa_features(segments_df)
+"""
 
 import numpy as np
 import pandas as pd
@@ -69,6 +88,22 @@ ANOMALY_TYPES = ["spike", "shift", "noise", "gap", "flat", "deformation"]
 
 
 class SyntheticTelemetryGenerator:
+    """ESA OPS-SAT benzeri sentetik uydu telemetri verisi uretir.
+
+    Iki kanal ailesi desteklenir:
+      - **Manyetometre** (CADC0872/0873/0874): ~1e-5 genlikli dusuk frekanslı
+        sinyal, yavas rastgele yuruyus (random walk) + kucuk titresim.
+      - **Fotodiyot** (CADC0884/0888/0892/0894): 0 − pi/2 arasinda duzgun
+        yukselen/alcalan egriler, genellikle sifirdan baslar.
+
+    Anomali turleri:
+      - **spike**       : Ani sivri tepe (hem yukari hem asagi)
+      - **shift**       : Sinyal seviyesinde kalici kayma
+      - **noise**       : Belirli bolge icin gurultu varyansinda artis
+      - **gap**         : Zaman damgasinda bosluk (eksik okumalar)
+      - **flat**        : Sinyalin sabit/duz kalmasi
+      - **deformation** : Sinusoidal bozulma enjeksiyonu
+    """
 
     def __init__(self, seed: int = 42):
         self.rng = np.random.default_rng(seed)
@@ -76,6 +111,12 @@ class SyntheticTelemetryGenerator:
 
 
     def _gen_magnetometer(self, n: int, profile: dict) -> np.ndarray:
+        """Manyetometre kanalı icin gercekci sinyal uret.
+
+        Gercek OPS-SAT manyetometre sinyali cok duzgun bir egridir:
+        yavas monoton trend + cok kucuk olcum gurultusu.
+        Cogu segmentte sadece 1 peak bulunur (10% prominence ile).
+        """
         t = np.linspace(0, 1, n)
         slope = self.rng.normal(0, profile["signal_std"] * 2)
         curve = self.rng.normal(0, profile["signal_std"] * 1)
@@ -90,6 +131,19 @@ class SyntheticTelemetryGenerator:
         return signal
 
     def _gen_photodiode(self, n: int, profile: dict) -> np.ndarray:
+        """Fotodiyot kanalı icin gercekci sinyal uret.
+
+        Tipik desen: sifirdan baslar, monoton yukselir (veya tersi),
+        ust sinir ~pi/2. Cok az gurultu — gercek veride sinyal
+        neredeyse tamamen duzgun.
+
+        Gercek OPS-SAT fotodiyot sinyalleri zamanin cogunu sifira yakin
+        (uydu golgede) gecirir; ortalama/maks orani ~0.15-0.35'tir. Duz
+        rise/fall/sin desenleri bunu yakalamaz (ortalamalari ~0.5*max olur),
+        bu yuzden desenler dusuk-deger egilimli bir us (gamma >= 1) ile
+        sekillendirilir. Gamma, kanal profilinin ort/maks oranindan turetilir:
+            E[max * t**gamma] = max / (gamma + 1)  ->  gamma = max/mean - 1
+        """
         pattern = self.rng.choice(["rise", "fall", "plateau", "rise_fall"])
 
         t = np.linspace(0, 1, n)
@@ -115,6 +169,7 @@ class SyntheticTelemetryGenerator:
         return signal
 
     def _generate_signal(self, n: int, profile: dict) -> np.ndarray:
+        """Kanal tipine gore sinyal uret."""
         if profile["type"] == "magnetometer":
             return self._gen_magnetometer(n, profile)
         else:
@@ -122,6 +177,7 @@ class SyntheticTelemetryGenerator:
 
 
     def _inject_spike(self, signal: np.ndarray, profile: dict) -> np.ndarray:
+        """Ani sivri tepe enjekte et."""
         s = signal.copy()
         n_spikes = self.rng.integers(1, 4)
         for _ in range(n_spikes):
@@ -135,6 +191,7 @@ class SyntheticTelemetryGenerator:
         return s
 
     def _inject_shift(self, signal: np.ndarray, profile: dict) -> np.ndarray:
+        """Sinyal seviyesinde kalici kayma."""
         s = signal.copy()
         shift_point = self.rng.integers(len(s) // 4, 3 * len(s) // 4)
         shift_amount = profile["signal_std"] * self.rng.uniform(3, 8) * self.rng.choice([-1, 1])
@@ -142,6 +199,7 @@ class SyntheticTelemetryGenerator:
         return s
 
     def _inject_noise(self, signal: np.ndarray, profile: dict) -> np.ndarray:
+        """Belirli bolge icin gurultu artisi."""
         s = signal.copy()
         start = self.rng.integers(0, max(1, len(s) // 2))
         end = self.rng.integers(start + len(s) // 4, len(s))
@@ -150,6 +208,7 @@ class SyntheticTelemetryGenerator:
         return s
 
     def _inject_flat(self, signal: np.ndarray, profile: dict) -> np.ndarray:
+        """Sinyalin sabit kalmasi (sensor donmasi)."""
         s = signal.copy()
         start = self.rng.integers(0, max(1, len(s) // 2))
         length = self.rng.integers(len(s) // 5, len(s) // 2)
@@ -159,6 +218,7 @@ class SyntheticTelemetryGenerator:
         return s
 
     def _inject_deformation(self, signal: np.ndarray, profile: dict) -> np.ndarray:
+        """Sinusoidal bozulma enjeksiyonu."""
         s = signal.copy()
         freq = self.rng.uniform(0.5, 5.0)
         amp = profile["signal_std"] * self.rng.uniform(3, 8)
@@ -167,6 +227,7 @@ class SyntheticTelemetryGenerator:
         return s
 
     def _inject_anomaly(self, signal: np.ndarray, profile: dict) -> Tuple[np.ndarray, str]:
+        """Rastgele bir anomali turu sec ve enjekte et."""
         anomaly_type = self.rng.choice(ANOMALY_TYPES)
         injectors = {
             "spike": self._inject_spike,
@@ -183,6 +244,18 @@ class SyntheticTelemetryGenerator:
     def _apply_onboard_artifacts(self, signal: np.ndarray, timestamps: List[str],
                                  sampling: int, profile: dict,
                                  is_anomaly: bool) -> Tuple[np.ndarray, List[str]]:
+        """Gercek uydu operasyonunda olusan sinyal artefaktlarini uygula.
+
+        Bu artefaktlar anomali DEGILDIR — normal operasyon sirasinda da olusur.
+        Anomali segmentlerinde daha yogun gorulur (gercek OPS-SAT verisinde oldugu gibi).
+
+        Artefaktlar:
+          1. Mikro-bosluk (2x expected interval): Tek okuma kaybi
+          2. Sifir-zaman farki: Duplike timestamp
+          3. Sifir-deger noktasi: Sensor sinyal kaybi
+          4. Sabit-deger tekrari: Last-value-hold (sensor donmasi)
+          5. Buyuk bosluk (nadir): Ciddi iletisim kesintisi
+        """
         s = signal.copy()
         n = len(s)
         expected_sec = float(sampling)
@@ -250,6 +323,10 @@ class SyntheticTelemetryGenerator:
 
     def _generate_timestamps(self, n: int, sampling: int,
                              inject_gap: bool = False) -> List[str]:
+        """ISO formatinda zaman damgalari uret.
+
+        inject_gap=True ise rastgele anomali bosluklari eklenir.
+        """
         interval = float(sampling)
         times = []
         current = self.base_time + timedelta(seconds=int(self.rng.integers(0, 86400)))
@@ -268,6 +345,17 @@ class SyntheticTelemetryGenerator:
                  n_segments: int = 500,
                  anomaly_ratio: float = 0.20,
                  channels: Optional[List[str]] = None) -> pd.DataFrame:
+        """Sentetik segments.csv formati uret.
+
+        Args:
+            n_segments: Uretilecek segment sayisi.
+            anomaly_ratio: Anomali orani (0-1).
+            channels: Kullanilacak kanal listesi (None = tum kanallar).
+
+        Returns:
+            DataFrame — segments.csv formatinda (channel, timestamp, value,
+                         label, sampling, anomaly, segment, train).
+        """
         if channels is None:
             channels = list(CHANNEL_PROFILES.keys())
 
@@ -353,6 +441,11 @@ class SyntheticTelemetryGenerator:
                              anomaly_ratio: float = 0.20,
                              channels: Optional[List[str]] = None
                              ) -> Tuple[pd.DataFrame, pd.DataFrame]:
+        """Sentetik veri uret VE ESA feature extraction uygula.
+
+        Returns:
+            (segments_df, dataset_df) — ham sinyal + 18 ozellikli tablo.
+        """
         from feature_engineer import extract_esa_features
 
         segments_df = self.generate(n_segments, anomaly_ratio, channels)
@@ -361,6 +454,13 @@ class SyntheticTelemetryGenerator:
 
 
     def _gen_magnetometer_continuous(self, n: int, profile: dict) -> np.ndarray:
+        """Uzun, kesintisiz manyetometre akisi (Ornstein-Uhlenbeck sureci).
+
+        Gercek manyetometre telemetrisi tek bir surekli akistir; bir pencereye
+        (segment) bakildiginda yerel olarak duzgun bir trend gorulur. OU sureci
+        bu davranisi dogal olarak uretir: ortalamaya geri donen, durağan std'si
+        profilin signal_std'sine esit bir rastgele yuruyus.
+        """
         mu = profile["signal_mean"]
         target_std = profile["signal_std"]
         theta = 0.01
@@ -373,6 +473,12 @@ class SyntheticTelemetryGenerator:
         return np.clip(x, profile["signal_min"] * 1.2, profile["signal_max"] * 1.2)
 
     def _gen_photodiode_continuous(self, n: int, profile: dict) -> np.ndarray:
+        """Uzun, kesintisiz fotodiyot akisi (yorunge-periyodik gunduz/golge).
+
+        Fotodiyot, yorunge boyunca gunes acisina gore periyodik bir desen izler.
+        Surekli akis, dusuk-deger egilimli (gamma) bir sinusoidal dongu olarak
+        modellenir; periyot yorunge suresini temsil eder.
+        """
         max_val = profile["signal_max"]
         ratio = profile.get("signal_mean", max_val * 0.3) / max_val if max_val > 0 else 0.3
         ratio = float(np.clip(ratio * 1.2, 0.08, 0.45))
@@ -392,6 +498,26 @@ class SyntheticTelemetryGenerator:
                             anomaly_ratio: float = 0.20,
                             inter_campaign_gap: Tuple[float, float] = (300.0, 7200.0)
                             ) -> pd.DataFrame:
+        """Segmentasyon ONCESI surekli ham telemetri akisi uret.
+
+        Gercek OPS-SAT yasam dongusunu taklit eder: kanal basina kesintisiz
+        toplama kampanyalari, aralarinda zaman bosluklari. Anomaliler akisa
+        enjekte edilir ve ornek-bazli bir ground-truth maskesi tutulur — segment
+        SINIRI veya segment ETIKETI yoktur. Segmentasyon ayri bir adimdir
+        (`feature_engineer.segment_raw_telemetry`).
+
+        Args:
+            channels: Kullanilacak kanallar (None = tum kanallar).
+            n_segments_hint: Segmentasyon sonrasi yaklasik segment sayisi hedefi
+                (kampanya boyutlandirmasi icin kullanilir).
+            anomaly_ratio: Anomalili olmasi beklenen pencere orani.
+            inter_campaign_gap: Kampanyalar arasi bosluk araligi (saniye).
+
+        Returns:
+            DataFrame — surekli ham akis (channel, timestamp, value, sampling,
+                         _anomaly_truth). `_anomaly_truth` yalnizca dogrulama /
+                         etiket turetme icindir; gercek ham veride bulunmaz.
+        """
         if channels is None:
             channels = list(CHANNEL_PROFILES.keys())
 

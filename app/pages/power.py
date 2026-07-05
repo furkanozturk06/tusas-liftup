@@ -1,3 +1,10 @@
+"""
+Guc Tuketimi Simulasyonu Sayfasi
+=================================
+Kanonik 44 modelin (42 tabular + 2 derin sirali) tahmini hesaplama maliyeti,
+egitim suresi, bellek kullanimi ve enerji tuketimini simule eder. ESA-ADB
+literatur baseline'lari fiilen egitilmedigi icin maliyet katalogunda yer almaz.
+"""
 
 import os
 import numpy as np
@@ -83,6 +90,10 @@ POWER_PROFILES = {
     "DIF":      {"cpu_watts": 40, "train_sec": 100, "infer_ms": 0.8, "memory_mb": 250, "category": "Gözetimsiz", "complexity": "Yüksek"},
 }
 
+# Kanonik 44 modele indirge: 23 gözetimli + 19 gözetimsiz + 2 derin sıralı (CNN1D, TCN).
+# ESA-ADB literatür baseline'ları (Telemanom-ESA, DC-VAE-ESA) bu projede fiilen
+# eğitilmediği için ampirik maliyet kataloğunda yer ALMAZ. Tek kaynak: core.constants
+# (model listesi değişirse katalog otomatik senkron kalır).
 from core.constants import SUP_MODEL_NAMES as _SUP, UNSUP_MODEL_NAMES as _UNSUP, DEEP_SEQ_MODELS as _DEEP
 _CANONICAL_ORDER = list(_SUP) + list(_DEEP) + list(_UNSUP)
 POWER_PROFILES = {k: POWER_PROFILES[k] for k in _CANONICAL_ORDER if k in POWER_PROFILES}
@@ -99,6 +110,9 @@ CO2_FACTOR = 400
 
 
 def _active_profiles():
+    """NB11 çıktısı reports/power_profiles.csv varsa onu (tek kaynak) kullanır;
+    yoksa yerleşik POWER_PROFILES tahminlerine düşer. Böylece dashboard ile
+    notebook çıktısı ayrışmaz."""
     if os.path.exists(POWER_CSV):
         try:
             df = pd.read_csv(POWER_CSV)
@@ -116,6 +130,7 @@ def _active_profiles():
 
 
 def _build_df(dataset_size: int = 10000):
+    """Aktif profil verisinden ölçekli DataFrame oluştur (CSV varsa CSV'den)."""
     scale = dataset_size / 10000
     profiles, _ = _active_profiles()
     rows = []

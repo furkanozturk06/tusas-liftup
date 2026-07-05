@@ -1,3 +1,11 @@
+"""
+Özellik Mühendisliği Modülü (Feature Engineering)
+=================================================
+
+Telemetri verilerinden (ESA OPS-SAT) anomali tespiti için
+zaman alanı, frekans alanı, fiziksel, çok değişkenli ve gecikmeli (lag)
+özellikleri (features) çıkaran gelişmiş modül.
+"""
 
 import pandas as pd
 import numpy as np
@@ -9,12 +17,23 @@ from sklearn.feature_selection import VarianceThreshold
 warnings.filterwarnings("ignore")
 
 class TelemetryFeatureEngineer:
+    """
+    Uydu telemetrisi (ESA OPS-SAT) için özellik çıkarım (Feature Engineering)
+    sınıfı: zaman / frekans / fiziksel / çok-değişkenli / gecikme özellikleri.
+    """
     
     def __init__(self, 
                  rolling_windows: List[int] = [30, 60, 120],
                  lags: List[int] = [1, 5, 10, 30, 60],
                  n_pca_components: int = 5,
                  corr_threshold: float = 0.95):
+        """
+        Args:
+            rolling_windows (List[int]): Pencereli özellikler için pencere boyutları (saniye).
+            lags (List[int]): Gecikmeli özellikler için adım sayıları.
+            n_pca_components (int): PCA için kullanılacak bileşen sayısı.
+            corr_threshold (float): Korelasyon analizi ile elenecek özellikler için eşik.
+        """
         self.rolling_windows = rolling_windows
         self.lags = lags
         self.n_pca_components = n_pca_components
@@ -26,6 +45,16 @@ class TelemetryFeatureEngineer:
         self.feature_metadata: Dict[str, Any] = {}
 
     def extract_time_domain_features(self, df: pd.DataFrame, columns: List[str]) -> pd.DataFrame:
+        """
+        Zaman alanı özelliklerini (istatistiksel, enerji, değişim, trend vb.) hesaplar.
+        
+        Args:
+            df (pd.DataFrame): Ham veriyi içeren DataFrame.
+            columns (List[str]): İşlem yapılacak telemetri sütunları.
+            
+        Returns:
+            pd.DataFrame: Zaman alanı özelliklerinin eklendiği DataFrame.
+        """
         result = df.copy()
         
         for col in columns:
@@ -52,6 +81,16 @@ class TelemetryFeatureEngineer:
         return result
 
     def extract_frequency_domain_features(self, df: pd.DataFrame, columns: List[str]) -> pd.DataFrame:
+        """
+        Frekans alanı özelliklerini (FFT, Spectral Entropy, PSD) hesaplar.
+        
+        Args:
+            df (pd.DataFrame): Veriyi içeren DataFrame.
+            columns (List[str]): İşlem yapılacak telemetri sütunları.
+            
+        Returns:
+            pd.DataFrame: Frekans alanı özelliklerinin eklendiği DataFrame.
+        """
         result = df.copy()
         
         for col in columns:
@@ -65,6 +104,16 @@ class TelemetryFeatureEngineer:
         return result
 
     def extract_physical_features(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        ESA OPS-SAT sensörlerine (manyetometre CADC0872-0874, fotodiyot
+        CADC0884-0894) özel fiziksel proxy özellikleri hesaplar.
+
+        Args:
+            df (pd.DataFrame): Veriyi içeren DataFrame.
+
+        Returns:
+            pd.DataFrame: Fiziksel özelliklerin eklendiği DataFrame.
+        """
         result = df.copy()
         cols = result.columns.tolist()
 
@@ -82,6 +131,17 @@ class TelemetryFeatureEngineer:
         return result
 
     def extract_multivariate_features(self, df: pd.DataFrame, columns: List[str], fit_pca: bool = True) -> pd.DataFrame:
+        """
+        Çok değişkenli özellikleri (PCA, Mahalanobis, Cross-correlation) çıkarır.
+        
+        Args:
+            df (pd.DataFrame): Veriyi içeren DataFrame.
+            columns (List[str]): İşlem yapılacak telemetri sütunları.
+            fit_pca (bool): PCA'in baştan fit edilip edilmeyeceği (Train=True, Test=False).
+            
+        Returns:
+            pd.DataFrame: PCA ve Multivariate özelliklerin eklendiği DataFrame.
+        """
         result = df.copy()
         
         if len(columns) < 2:
@@ -110,6 +170,16 @@ class TelemetryFeatureEngineer:
         return result
 
     def extract_lag_features(self, df: pd.DataFrame, columns: List[str]) -> pd.DataFrame:
+        """
+        Belirlenen gecikme (lag) adımlarına göre özellikleri oluşturur.
+        
+        Args:
+            df (pd.DataFrame): Veriyi içeren DataFrame.
+            columns (List[str]): İşlem yapılacak telemetri sütunları.
+            
+        Returns:
+            pd.DataFrame: Gecikmeli özelliklerin eklendiği DataFrame.
+        """
         result = df.copy()
         
         for col in columns:
@@ -120,6 +190,18 @@ class TelemetryFeatureEngineer:
         return result
 
     def select_features(self, df: pd.DataFrame, protected_cols: List[str] = None, target_col: Optional[str] = None, fit: bool = True) -> Tuple[pd.DataFrame, List[str]]:
+        """
+        Gereksiz (düşük varyanslı veya aşırı korele) özellikleri eler.
+        
+        Args:
+            df (pd.DataFrame): Özellikleri çıkarılmış DataFrame.
+            protected_cols (List[str]): Silinmemesi gereken orijinal sütunlar.
+            target_col (str, optional): Hedef değişken sütunu (çıkarılacak).
+            fit (bool): Seçicilerin fit edilip edilmeyeceği.
+            
+        Returns:
+            Tuple[pd.DataFrame, List[str]]: Seçilen özellikleri içeren DataFrame ve sütun listesi.
+        """
         work_df = df.copy()
         if protected_cols is None: protected_cols = []
         
@@ -156,6 +238,10 @@ class TelemetryFeatureEngineer:
         return work_df[final_cols], feature_cols
 
     def extract_segment_features(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Zaman serisini segment (olay) bazlı gruplayarak her olay için
+        tek satırlık özet özellikler (RMS, Peak-to-Peak vb.) çıkarır.
+        """
         print("Segment bazlı istatistikler ve sinyal özellikleri çıkarılıyor...")
 
         def calculate_segment_stats(group):
@@ -195,6 +281,35 @@ def segment_raw_telemetry(raw_df: pd.DataFrame,
                           min_gap_seconds: float = 150.0,
                           min_anomaly_overlap: float = 0.10,
                           seed: int = 42) -> pd.DataFrame:
+    """Surekli ham telemetriyi segments.csv formatina boler (HIBRIT).
+
+    Iki asamali, gercek veriye dayali segmentasyon:
+      1. **Bosluk-bolme:** Ardisik ornekler arasi Δt, kosu siniri esigini asarsa
+         yeni bir "kosu" (kampanya) baslar. Esik = `max(gap_factor * sampling,
+         min_gap_seconds)`. `min_gap_seconds` tabani, onboard mikro-bosluklarinin
+         (2x sampling) ve buyuk-bosluk artefaktlarinin (<=130s) yanlislikla kosu
+         bolmesini onler — bunlar segment ICINDE kalmalidir (gaps_squared'a katki).
+      2. **Uzunluk-penceresi:** Her kosu, kanalin gercek segment uzunluk
+         dagilimina (`len_mean`/`len_std`, [`len_min`, `len_max`] ile kirpilmis)
+         uyan pencerelere bolunur.
+
+    Anomali etiketi ATANMAZ, TURETILIR: bir segment, icinde ground-truth anomali
+    ornegi (`_anomaly_truth`) tasiyorsa "anomaly" olarak etiketlenir. Bu sutun
+    yoksa tum segmentler nominal kabul edilir.
+
+    Args:
+        raw_df: Surekli ham akis (channel, timestamp, value, sampling
+                [, _anomaly_truth]).
+        profiles: Kanal -> uzunluk profili sozlugu. None ise
+                  synthetic_generator.CHANNEL_PROFILES denenir.
+        train_ratio: Train olarak isaretlenecek segment orani.
+        gap_factor: Kosu siniri esigi (Δt > gap_factor * sampling).
+        seed: Pencere uzunlugu ve train atamasi icin rastgelelik tohumu.
+
+    Returns:
+        DataFrame — segments.csv formati (channel, timestamp, value, label,
+                     sampling, anomaly, segment, train).
+    """
     if profiles is None:
         try:
             from synthetic_generator import CHANNEL_PROFILES as profiles
@@ -270,6 +385,34 @@ def augment_segments_iccs(segments_df: pd.DataFrame,
                           modes=("omega1", "omega2", "omega3"),
                           nominal_only: bool = True,
                           seed: int = 42) -> pd.DataFrame:
+    """ICCS sinyal-seviyesi veri augmentasyonu (Ruszczak et al. 2023).
+
+    Ham segmentlere (segments.csv formati) sinyal-uzayi donusumleri uygular ve
+    yeni (sentetik-olmayan, gercek sinyalden tureyen) segmentler uretir. Makale,
+    uzman-onayli anomalileri korumak icin augmentasyonu YALNIZ nominal segmentlere
+    uygular (nominal_only=True).
+
+    Donusumler (makaledeki terminolojinin yorumu acikca belirtilmistir):
+      - omega1 (OX ekseni etrafinda ayna): dikey yansima, v -> 2*median - v.
+        Carpiklik (skew) isaretini ters cevirir; ortalama/varyans korunur.
+      - omega2 (zaman tersine cevirme): v -> v[::-1]. Sirali/turev tabanli
+        ozellikleri etkiler (dagilimsal ozellikler korunur).
+      - omega3 (kaydirma): dairesel kaydirma (segment uzunlugunun %15-25'i).
+
+    Yeni segmentler nominal (anomaly=0), train=1 olarak isaretlenir ve yeni
+    benzersiz segment kimlikleri alir (orijinal kimliklerle cakismaz).
+
+    Args:
+        segments_df: Ham segments.csv (channel, timestamp, value, sampling,
+                     anomaly, segment[, train]).
+        modes: Uygulanacak donusumler.
+        nominal_only: True ise yalniz nominal (anomaly==0) segmentler augmente edilir.
+        seed: omega3 kaydirma miktari icin rastgelelik tohumu.
+
+    Returns:
+        DataFrame — augmente edilmis YENI segmentler (orijinaller dahil DEGIL),
+                    segments.csv ile ayni sutunlar.
+    """
     rng = np.random.default_rng(seed)
     src = segments_df
     if nominal_only and "anomaly" in src.columns:
@@ -321,6 +464,28 @@ def augment_segments_iccs(segments_df: pd.DataFrame,
 
 def extract_esa_features(segments_df: pd.DataFrame,
                          prominence_ratio: float = 0.10) -> pd.DataFrame:
+    """Ham telemetri segmentlerinden ESA OPSSAT-AD 18 handcrafted feature'i cikarir.
+
+    Her segment icin tek satirlik ozet ozellikler hesaplanir.
+
+    Beklenen sutunlar (segments.csv formati):
+        segment, channel, timestamp, value, sampling, anomaly, train[, label]
+
+    Cikti sutunlari (dataset.csv formati):
+        segment, anomaly, train, channel, sampling,
+        duration, len, mean, var, std, kurtosis, skew,
+        n_peaks, smooth10_n_peaks, smooth20_n_peaks,
+        diff_peaks, diff2_peaks, diff_var, diff2_var,
+        gaps_squared, len_weighted, var_div_duration, var_div_len
+
+    Args:
+        segments_df: Ham segments verisi (her satir bir zaman noktasi).
+        prominence_ratio: Tepe tespiti icin minimum belirginlik orani
+                          (sinyal genliginin yuzde kaci). ESA orijinali = 0.10.
+
+    Returns:
+        DataFrame — segment basina 18 ozellik + 5 meta sutun.
+    """
     required = {'segment', 'value', 'timestamp'}
     missing = required - set(segments_df.columns)
     if missing:
@@ -419,6 +584,19 @@ def extract_esa_features(segments_df: pd.DataFrame,
     return df_out
 
     def transform(self, df: pd.DataFrame, columns: List[str], target_col: Optional[str] = 'anomaly', fit: bool = True) -> pd.DataFrame:
+        """
+        Tüm özellik mühendisliği aşamalarını (Time, Freq, Physical, Multi, Lag, Select)
+        sırasıyla çalıştırarak nihai özellik matrisini oluşturur.
+        
+        Args:
+            df (pd.DataFrame): Ham veriyi içeren DataFrame.
+            columns (List[str]): İşlem yapılacak temel telemetri sütunları.
+            target_col (str, optional): Hedef değişkenin adı.
+            fit (bool): PCA ve Feature Selection nesnelerinin eğitilip eğitilmeyeceği.
+            
+        Returns:
+            pd.DataFrame: Zenginleştirilmiş ve filtrelenmiş özellik DataFrame'i.
+        """
         print("1. Time Domain özellikleri hesaplanıyor...")
         df = self.extract_time_domain_features(df, columns)
         

@@ -1,3 +1,10 @@
+"""
+Gözetimli Öğrenme Modelleri Modülü (Supervised Learning)
+========================================================
+
+Uydu telemetrisi (ESA OPS-SAT) anomali tespiti için gözetimli makine öğrenmesi
+ve derin öğrenme (LSTM) modellerini eğitme, değerlendirme ve tahmin etme sınıfı.
+"""
 
 import os
 import json
@@ -66,6 +73,16 @@ KERAS_MODELS = SEQUENCE_MODELS | {"MLP"}
 
 
 class SupervisedAnomalyDetector:
+    """
+    Gözetimli öğrenme algoritmalarını kullanarak anomali tespiti yapan yönetici sınıf.
+
+    Klasik ML: Random Forest, SVM, XGBoost, Extra Trees, Gradient Boosting,
+        HistGradientBoosting, AdaBoost, KNN, Logistic Regression, Decision Tree,
+        Gaussian Naive Bayes, Voting Ensemble, LDA, QDA, Bagging, Ridge, SGD.
+    Derin öğrenme: MLP, LSTM, BiLSTM, GRU, BiGRU, 1D-CNN, CNN-LSTM, CNN-BiLSTM,
+        CNN-GRU, Transformer, TCN, Attention-BiLSTM, FCN, ResNet-1D,
+        InceptionTime, LSTM-FCN.
+    """
 
     def __init__(self, random_state: int = 42):
         self.random_state = random_state
@@ -74,6 +91,17 @@ class SupervisedAnomalyDetector:
         self.metrics: Dict[str, Dict[str, float]] = {}
 
     def train_random_forest(self, X_train: pd.DataFrame, y_train: pd.Series, tune: bool = False) -> RandomForestClassifier:
+        """
+        Random Forest modelini eğitir ve kaydeder.
+        
+        Args:
+            X_train (pd.DataFrame): Eğitim özellikleri.
+            y_train (pd.Series): Eğitim etiketleri.
+            tune (bool): Hiperparametre optimizasyonu yapılıp yapılmayacağı.
+            
+        Returns:
+            RandomForestClassifier: Eğitilmiş model.
+        """
         print("Random Forest eğitiliyor...")
         if tune:
             param_grid = {
@@ -96,6 +124,17 @@ class SupervisedAnomalyDetector:
         return model
 
     def train_svm(self, X_train: pd.DataFrame, y_train: pd.Series, kernel: str = 'rbf') -> CalibratedClassifierCV:
+        """
+        Support Vector Machine modelini eğitir (Olasılık kalibrasyonu ile).
+        
+        Args:
+            X_train (pd.DataFrame): Eğitim özellikleri.
+            y_train (pd.Series): Eğitim etiketleri.
+            kernel (str): SVM çekirdeği ('rbf', 'linear', 'poly').
+            
+        Returns:
+            CalibratedClassifierCV: Olasılık çıktıları verebilen eğitilmiş SVM modeli.
+        """
         print(f"SVM ({kernel} kernel) eğitiliyor...")
         base_svm = SVC(kernel=kernel, class_weight='balanced', random_state=self.random_state, max_iter=5000)
         model = CalibratedClassifierCV(base_svm, cv=3)
@@ -105,6 +144,7 @@ class SupervisedAnomalyDetector:
         return model
 
     def train_lsvc(self, X_train: pd.DataFrame, y_train: pd.Series) -> CalibratedClassifierCV:
+        """Linear SVC (karesel menteşe kaybı) sınıflandırıcısını eğitir."""
         print("Linear SVC eğitiliyor...")
         base = LinearSVC(class_weight='balanced', max_iter=5000, random_state=self.random_state)
         model = CalibratedClassifierCV(base, cv=3)
@@ -113,6 +153,9 @@ class SupervisedAnomalyDetector:
         return model
 
     def train_xgboost(self, X_train: pd.DataFrame, y_train: pd.Series, X_val: Optional[pd.DataFrame] = None, y_val: Optional[pd.Series] = None):
+        """
+        XGBoost modelini eğitir.
+        """
         if xgb is None:
             raise ImportError("XGBoost kütüphanesi bulunamadı.")
             
@@ -143,6 +186,8 @@ class SupervisedAnomalyDetector:
         return model
 
     def train_xgbod(self, X_train: pd.DataFrame, y_train: pd.Series):
+        """XGBOD (Extreme Gradient Boosting Outlier Detection) modelini eğitir.
+        Gözetimsiz skor özelliklerini XGBoost ile birleştirir (yarı-gözetimli)."""
         if not _XGBOD_AVAILABLE:
             raise ImportError("PyOD/XGBOD bulunamadı (pip install pyod).")
         print("XGBOD eğitiliyor...")
@@ -153,6 +198,7 @@ class SupervisedAnomalyDetector:
 
     def train_mlp(self, X_train: np.ndarray, y_train: np.ndarray, X_val: np.ndarray, y_val: np.ndarray, 
                    epochs: int = 50, batch_size: int = 64):
+        """Derin Öğrenme (MLP) modelini eğitir."""
         if Sequential is None:
             raise ImportError("TensorFlow/Keras bulunamadı.")
             
@@ -189,6 +235,7 @@ class SupervisedAnomalyDetector:
 
 
     def train_extra_trees(self, X_train, y_train) -> ExtraTreesClassifier:
+        """Extremely Randomized Trees (Extra Trees) sınıflandırıcısını eğitir."""
         print("Extra Trees eğitiliyor...")
         model = ExtraTreesClassifier(
             n_estimators=300, max_depth=None, class_weight='balanced',
@@ -199,6 +246,7 @@ class SupervisedAnomalyDetector:
         return model
 
     def train_gradient_boosting(self, X_train, y_train) -> GradientBoostingClassifier:
+        """Gradient Boosting (sklearn) sınıflandırıcısını eğitir."""
         print("Gradient Boosting eğitiliyor...")
         model = GradientBoostingClassifier(
             n_estimators=300, learning_rate=0.05, max_depth=3,
@@ -209,6 +257,7 @@ class SupervisedAnomalyDetector:
         return model
 
     def train_adaboost(self, X_train, y_train) -> AdaBoostClassifier:
+        """AdaBoost sınıflandırıcısını eğitir."""
         print("AdaBoost eğitiliyor...")
         model = AdaBoostClassifier(
             n_estimators=300, learning_rate=0.5,
@@ -219,6 +268,7 @@ class SupervisedAnomalyDetector:
         return model
 
     def train_knn(self, X_train, y_train, n_neighbors: int = 15) -> KNeighborsClassifier:
+        """K-En Yakın Komşu (KNN) sınıflandırıcısını eğitir."""
         print(f"KNN (k={n_neighbors}) eğitiliyor...")
         model = KNeighborsClassifier(n_neighbors=n_neighbors, weights='distance', n_jobs=-1)
         model.fit(X_train, y_train)
@@ -226,6 +276,7 @@ class SupervisedAnomalyDetector:
         return model
 
     def train_logistic_regression(self, X_train, y_train) -> LogisticRegression:
+        """Lojistik Regresyon (doğrusal) sınıflandırıcısını eğitir."""
         print("Logistic Regression eğitiliyor...")
         model = LogisticRegression(
             max_iter=2000, class_weight='balanced', random_state=self.random_state
@@ -235,6 +286,7 @@ class SupervisedAnomalyDetector:
         return model
 
     def train_hist_gradient_boosting(self, X_train, y_train) -> HistGradientBoostingClassifier:
+        """Histogram tabanlı Gradient Boosting (modern, hızlı sklearn boosting)."""
         print("HistGradientBoosting eğitiliyor...")
         model = HistGradientBoostingClassifier(
             max_iter=400, learning_rate=0.05, max_depth=None,
@@ -245,6 +297,7 @@ class SupervisedAnomalyDetector:
         return model
 
     def train_decision_tree(self, X_train, y_train) -> DecisionTreeClassifier:
+        """Tek Karar Ağacı (yorumlanabilir baseline)."""
         print("Decision Tree eğitiliyor...")
         model = DecisionTreeClassifier(
             max_depth=12, min_samples_leaf=5, class_weight='balanced',
@@ -255,6 +308,7 @@ class SupervisedAnomalyDetector:
         return model
 
     def train_naive_bayes(self, X_train, y_train) -> GaussianNB:
+        """Gaussian Naive Bayes (olasılıksal baseline)."""
         print("Gaussian Naive Bayes eğitiliyor...")
         model = GaussianNB()
         model.fit(X_train, y_train)
@@ -262,6 +316,7 @@ class SupervisedAnomalyDetector:
         return model
 
     def train_voting(self, X_train, y_train) -> VotingClassifier:
+        """Yumuşak (soft) oylama topluluğu: RF + Gradient Boosting + Logistic Regression."""
         print("Voting Ensemble (soft) eğitiliyor...")
         estimators = [
             ('rf', RandomForestClassifier(n_estimators=200, class_weight='balanced',
@@ -277,6 +332,7 @@ class SupervisedAnomalyDetector:
         return model
 
     def train_lda(self, X_train, y_train) -> LinearDiscriminantAnalysis:
+        """Doğrusal Diskriminant Analizi (LDA)."""
         print("LDA (Linear Discriminant Analysis) eğitiliyor...")
         model = LinearDiscriminantAnalysis()
         model.fit(X_train, y_train)
@@ -284,6 +340,7 @@ class SupervisedAnomalyDetector:
         return model
 
     def train_qda(self, X_train, y_train) -> QuadraticDiscriminantAnalysis:
+        """Karesel Diskriminant Analizi (QDA)."""
         print("QDA (Quadratic Discriminant Analysis) eğitiliyor...")
         model = QuadraticDiscriminantAnalysis(reg_param=0.1)
         model.fit(X_train, y_train)
@@ -291,6 +348,7 @@ class SupervisedAnomalyDetector:
         return model
 
     def train_bagging(self, X_train, y_train) -> BaggingClassifier:
+        """Bagging topluluğu (karar ağacı tabanlı bootstrap aggregating)."""
         print("Bagging eğitiliyor...")
         model = BaggingClassifier(
             n_estimators=200, max_samples=0.8, max_features=0.8,
@@ -301,6 +359,10 @@ class SupervisedAnomalyDetector:
         return model
 
     def train_ridge(self, X_train, y_train) -> RidgeClassifier:
+        """Ridge sınıflandırıcı (L2 düzenlenmiş doğrusal model).
+
+        predict_proba sağlamaz; skor olarak decision_function kullanılır.
+        """
         print("Ridge Classifier eğitiliyor...")
         model = RidgeClassifier(class_weight='balanced', random_state=self.random_state)
         model.fit(X_train, y_train)
@@ -308,6 +370,7 @@ class SupervisedAnomalyDetector:
         return model
 
     def train_sgd(self, X_train, y_train) -> SGDClassifier:
+        """SGD tabanlı doğrusal sınıflandırıcı (log-loss → olasılık çıktısı)."""
         print("SGD Classifier (log-loss) eğitiliyor...")
         model = SGDClassifier(
             loss='log_loss', class_weight='balanced', max_iter=2000,
@@ -320,6 +383,11 @@ class SupervisedAnomalyDetector:
 
     @staticmethod
     def _reshape_seq(X: np.ndarray) -> np.ndarray:
+        """Tablo özelliklerini (örnek, özellik) -> (örnek, özellik, 1) 3B tensöre çevirir.
+
+        Conv1D/LSTM/GRU katmanları zaman ekseni bekler; burada her özellik
+        vektörü tek kanallı bir sinyal (özellik ekseni = zaman adımı) olarak ele alınır.
+        """
         X = np.asarray(X, dtype='float32')
         if X.ndim == 2:
             return X.reshape((X.shape[0], X.shape[1], 1))
@@ -327,6 +395,7 @@ class SupervisedAnomalyDetector:
 
     def _fit_keras_sequence(self, name: str, model, X_train, y_train, X_val, y_val,
                             epochs: int, batch_size: int, patience: int = 12):
+        """Sıralı bir Keras modelini derler ve eğitir; self.models'a kaydeder."""
         model.compile(optimizer=Adam(learning_rate=0.001),
                       loss='binary_crossentropy', metrics=['accuracy'])
         early_stop = EarlyStopping(monitor='val_loss', patience=patience, restore_best_weights=True)
@@ -345,6 +414,7 @@ class SupervisedAnomalyDetector:
         return model, history
 
     def train_lstm(self, X_train, y_train, X_val, y_val, epochs: int = 60, batch_size: int = 32):
+        """Saf LSTM sınıflandırıcısını eğitir."""
         if Sequential is None:
             raise ImportError("TensorFlow/Keras bulunamadı.")
         print("LSTM eğitiliyor...")
@@ -361,6 +431,7 @@ class SupervisedAnomalyDetector:
         return self._fit_keras_sequence('LSTM', model, X_train, y_train, X_val, y_val, epochs, batch_size)
 
     def train_bilstm(self, X_train, y_train, X_val, y_val, epochs: int = 60, batch_size: int = 32):
+        """Çift Yönlü LSTM (BiLSTM) sınıflandırıcısını eğitir."""
         if Sequential is None:
             raise ImportError("TensorFlow/Keras bulunamadı.")
         print("BiLSTM eğitiliyor...")
@@ -377,6 +448,7 @@ class SupervisedAnomalyDetector:
         return self._fit_keras_sequence('BiLSTM', model, X_train, y_train, X_val, y_val, epochs, batch_size)
 
     def train_gru(self, X_train, y_train, X_val, y_val, epochs: int = 60, batch_size: int = 32):
+        """Saf GRU sınıflandırıcısını eğitir."""
         if Sequential is None:
             raise ImportError("TensorFlow/Keras bulunamadı.")
         print("GRU eğitiliyor...")
@@ -393,6 +465,11 @@ class SupervisedAnomalyDetector:
         return self._fit_keras_sequence('GRU', model, X_train, y_train, X_val, y_val, epochs, batch_size)
 
     def train_cnn_bilstm(self, X_train, y_train, X_val, y_val, epochs: int = 60, batch_size: int = 32):
+        """CNN + BiLSTM hibrit modelini eğitir.
+
+        1D evrişim katmanları yerel desenleri çıkarır, ardından çift yönlü LSTM
+        özellik ekseni boyunca bağlamı modeller.
+        """
         if Sequential is None:
             raise ImportError("TensorFlow/Keras bulunamadı.")
         print("CNN-BiLSTM (hibrit) eğitiliyor...")
@@ -414,6 +491,7 @@ class SupervisedAnomalyDetector:
         return self._fit_keras_sequence('CNN_BiLSTM', model, X_train, y_train, X_val, y_val, epochs, batch_size)
 
     def train_cnn_gru(self, X_train, y_train, X_val, y_val, epochs: int = 60, batch_size: int = 32):
+        """CNN + GRU hibrit modelini eğitir (CNN-BiLSTM'in daha hafif alternatifi)."""
         if Sequential is None:
             raise ImportError("TensorFlow/Keras bulunamadı.")
         print("CNN-GRU (hibrit) eğitiliyor...")
@@ -435,6 +513,7 @@ class SupervisedAnomalyDetector:
         return self._fit_keras_sequence('CNN_GRU', model, X_train, y_train, X_val, y_val, epochs, batch_size)
 
     def train_transformer(self, X_train, y_train, X_val, y_val, epochs: int = 60, batch_size: int = 32):
+        """Self-Attention (Transformer encoder) tabanlı sınıflandırıcıyı eğitir."""
         if Model is None:
             raise ImportError("TensorFlow/Keras bulunamadı.")
         print("Transformer (self-attention) eğitiliyor...")
@@ -462,6 +541,7 @@ class SupervisedAnomalyDetector:
         return self._fit_keras_sequence('Transformer', model, X_train, y_train, X_val, y_val, epochs, batch_size)
 
     def train_tcn(self, X_train, y_train, X_val, y_val, epochs: int = 60, batch_size: int = 32):
+        """Temporal Convolutional Network (TCN) — dilated causal convolutions ile."""
         if Model is None:
             raise ImportError("TensorFlow/Keras bulunamadı.")
         print("TCN (Temporal Conv Network) eğitiliyor...")
@@ -487,6 +567,7 @@ class SupervisedAnomalyDetector:
         return self._fit_keras_sequence('TCN', model, X_train, y_train, X_val, y_val, epochs, batch_size)
 
     def train_cnn1d(self, X_train, y_train, X_val, y_val, epochs: int = 60, batch_size: int = 32):
+        """Saf 1D Evrişimli Sinir Ağı (CNN) sınıflandırıcısı."""
         if Sequential is None:
             raise ImportError("TensorFlow/Keras bulunamadı.")
         print("1D-CNN eğitiliyor...")
@@ -508,6 +589,7 @@ class SupervisedAnomalyDetector:
         return self._fit_keras_sequence('CNN1D', model, X_train, y_train, X_val, y_val, epochs, batch_size)
 
     def train_bigru(self, X_train, y_train, X_val, y_val, epochs: int = 60, batch_size: int = 32):
+        """Çift Yönlü GRU (BiGRU) sınıflandırıcısını eğitir."""
         if Sequential is None:
             raise ImportError("TensorFlow/Keras bulunamadı.")
         print("BiGRU eğitiliyor...")
@@ -524,6 +606,7 @@ class SupervisedAnomalyDetector:
         return self._fit_keras_sequence('BiGRU', model, X_train, y_train, X_val, y_val, epochs, batch_size)
 
     def train_cnn_lstm(self, X_train, y_train, X_val, y_val, epochs: int = 60, batch_size: int = 32):
+        """CNN + (tek yönlü) LSTM hibrit modelini eğitir."""
         if Sequential is None:
             raise ImportError("TensorFlow/Keras bulunamadı.")
         print("CNN-LSTM (hibrit) eğitiliyor...")
@@ -545,6 +628,11 @@ class SupervisedAnomalyDetector:
         return self._fit_keras_sequence('CNN_LSTM', model, X_train, y_train, X_val, y_val, epochs, batch_size)
 
     def train_attention_bilstm(self, X_train, y_train, X_val, y_val, epochs: int = 60, batch_size: int = 32):
+        """BiLSTM + Self-Attention havuzlama (attention pooling) modeli.
+
+        BiLSTM dizi çıktısı üzerine multi-head self-attention uygulanır, ardından
+        zaman ekseni global ortalama ile havuzlanır.
+        """
         if Model is None:
             raise ImportError("TensorFlow/Keras bulunamadı.")
         print("Attention-BiLSTM eğitiliyor...")
@@ -565,6 +653,10 @@ class SupervisedAnomalyDetector:
         return self._fit_keras_sequence('Attention_BiLSTM', model, X_train, y_train, X_val, y_val, epochs, batch_size)
 
     def train_fcn(self, X_train, y_train, X_val, y_val, epochs: int = 60, batch_size: int = 32):
+        """Fully Convolutional Network (FCN) — zaman serisi sınıflandırma baseline'ı.
+
+        Wang et al. (2017): üç Conv1D bloğu (BN+ReLU) + Global Average Pooling.
+        """
         if Sequential is None:
             raise ImportError("TensorFlow/Keras bulunamadı.")
         print("FCN (Fully Convolutional Network) eğitiliyor...")
@@ -580,6 +672,10 @@ class SupervisedAnomalyDetector:
         return self._fit_keras_sequence('FCN', model, X_train, y_train, X_val, y_val, epochs, batch_size)
 
     def train_resnet1d(self, X_train, y_train, X_val, y_val, epochs: int = 60, batch_size: int = 32):
+        """ResNet-1D — zaman serisi sınıflandırma için artık (residual) bloklu CNN.
+
+        Wang et al. (2017): 3 residual blok (her biri 3 Conv1D), ardından GAP.
+        """
         if Model is None:
             raise ImportError("TensorFlow/Keras bulunamadı.")
         print("ResNet-1D eğitiliyor...")
@@ -607,6 +703,10 @@ class SupervisedAnomalyDetector:
         return self._fit_keras_sequence('ResNet1D', model, X_train, y_train, X_val, y_val, epochs, batch_size)
 
     def train_inceptiontime(self, X_train, y_train, X_val, y_val, epochs: int = 60, batch_size: int = 32):
+        """InceptionTime — çok ölçekli Inception modülleriyle SOTA TS sınıflandırma.
+
+        Fawaz et al. (2020): bottleneck + paralel farklı kernel boyutları + residual.
+        """
         if Model is None:
             raise ImportError("TensorFlow/Keras bulunamadı.")
         print("InceptionTime eğitiliyor...")
@@ -640,6 +740,10 @@ class SupervisedAnomalyDetector:
         return self._fit_keras_sequence('InceptionTime', model, X_train, y_train, X_val, y_val, epochs, batch_size)
 
     def train_lstm_fcn(self, X_train, y_train, X_val, y_val, epochs: int = 60, batch_size: int = 32):
+        """LSTM-FCN — paralel LSTM dalı + FCN dalı birleşimi (Karim et al. 2018).
+
+        Güçlü zaman serisi sınıflandırma hibriti.
+        """
         if Model is None:
             raise ImportError("TensorFlow/Keras bulunamadı.")
         print("LSTM-FCN eğitiliyor...")
@@ -661,6 +765,7 @@ class SupervisedAnomalyDetector:
         return self._fit_keras_sequence('LSTM_FCN', model, X_train, y_train, X_val, y_val, epochs, batch_size)
 
     def evaluate_model(self, name: str, X_test: np.ndarray, y_test: np.ndarray, threshold: float = 0.5) -> Dict[str, float]:
+        """Belirli bir modeli test seti üzerinde değerlendirir."""
         if name not in self.models:
             raise ValueError(f"Model bulunamadı: {name}")
             
@@ -705,6 +810,7 @@ class SupervisedAnomalyDetector:
         return metrics
 
     def evaluate_all(self, X_test: np.ndarray, y_test: np.ndarray) -> pd.DataFrame:
+        """Kayıtlı tüm modelleri değerlendirip tablo olarak döndürür."""
         for name in self.models.keys():
             self.evaluate_model(name, X_test, y_test)
                 
@@ -714,6 +820,7 @@ class SupervisedAnomalyDetector:
         return df_metrics
 
     def save_model(self, name: str, filepath: str):
+        """Eğitilmiş modeli kaydeder."""
         if name not in self.models:
             raise ValueError(f"Model bulunamadı: {name}")
             
@@ -725,6 +832,7 @@ class SupervisedAnomalyDetector:
         print(f"Model kaydedildi: {filepath}")
 
     def save_metadata(self, filepath: str):
+        """Eğitim metriklerini JSON olarak kaydeder."""
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
         data = {
             "best_model": self.best_model_name,

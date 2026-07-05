@@ -1,3 +1,4 @@
+"""SHAP Analiz sayfasi: layout + callback'ler."""
 import os
 import io
 import json
@@ -23,6 +24,8 @@ from core.state import (MODELS, THRESHOLDS, SCALER, TEST_DATA, ALL_METRICS, FEAT
 
 
 def _shap_model_list():
+    """SHAP değeri hesaplanmış tüm modellerin adları (NB07 'shap_models' listesi).
+    Geriye dönük: liste yoksa anahtarlardan türetilir (kısa rf/xgb/mlp aliaslar hariç)."""
     if SHAP_DATA is None:
         return []
     models = SHAP_DATA.get("shap_models")
@@ -34,6 +37,7 @@ def _shap_model_list():
 
 
 def _default_shap_model(models):
+    """Açıklama için varsayılan model: RandomForest (kesin ağaç SHAP) varsa o, yoksa ilk."""
     if "RandomForest" in models:
         return "RandomForest"
     return models[0] if models else None

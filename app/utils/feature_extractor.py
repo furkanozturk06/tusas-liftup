@@ -4,6 +4,14 @@ from scipy import stats
 from scipy.signal import find_peaks
 
 def extract_features_from_raw(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Ham telemetri sinyallerini segment bazında gruplar ve kanonik **18 ESA
+    handcrafted** özelliğini hesaplar (kanonik modeller bu 18 özelliği bekler;
+    bkz. models/test_data.joblib feature_cols ve docs/veri_ve_pipeline.md).
+
+    Not: Eski sürüm `custom_rms/p2p/crest/zcr` ve `channel_id` (24 özellik) de
+    üretiyordu; kanonik pipeline 18 ESA özelliğine geçtiği için bunlar kaldırıldı.
+    """
     features = []
     
     for segment_id, group in df.groupby('segment'):

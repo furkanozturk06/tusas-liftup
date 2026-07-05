@@ -1,3 +1,4 @@
+"""Operasyon Paneli sayfasi: layout + callback'ler."""
 import os
 import io
 import json
@@ -23,6 +24,8 @@ from core.state import (MODELS, THRESHOLDS, SCALER, TEST_DATA, ALL_METRICS, FEAT
 
 
 def page_dashboard():
+    """Operasyon paneli — anomali tespit ekibi için telemetri sağlık durumu ve alarm özeti.
+    (Model performans/benchmark görünümü Geliştirici > Model Performans sayfasındadır.)"""
     df_seg = pd.read_parquet(DEMO_PATH) if os.path.exists(DEMO_PATH) else pd.DataFrame()
     n_seg = len(df_seg)
     has_anom = 'anomaly' in df_seg.columns and n_seg > 0
@@ -32,6 +35,7 @@ def page_dashboard():
     n_channels = int(df_seg['channel'].nunique()) if has_ch else 0
     n_raw = len(LIVE_DATA)
 
+    # ── Kanal sağlığı: kanal başına anomali oranı (hangi sensör sorunlu) ──
     fig_health = go.Figure()
     if has_anom and has_ch:
         ch = df_seg.groupby('channel')['anomaly'].agg(['sum', 'count'])
@@ -42,9 +46,10 @@ def page_dashboard():
             y=[channel_label(c) for c in ch.index], x=ch['rate'].tolist(), orientation='h', marker_color=bar_clr,
             text=[f"{r:.0f}%  ({int(s)}/{int(c)})" for r, s, c in zip(ch['rate'], ch['sum'], ch['count'])],
             textposition='outside', textfont=dict(size=10, color="#475569")))
-        fig_health.update_layout(**PLT_LAYOUT, height=360, title="Kanal Sağlığı · Anomali Oranı (%)",
+        fig_health.update_layout(**PLT_LAYOUT, height=360, title="Kanal Sağlığı — Anomali Oranı (%)",
                                  xaxis_title="Anomali oranı (%)", xaxis_range=[0, max(ch['rate']) * 1.25 + 5])
 
+    # ── Son alarmlar: anomalik segmentler, değişkenliğe (var) göre şiddet ──
     alarm_rows = []
     if has_anom:
         anoms = df_seg[df_seg['anomaly'] == 1].copy()
@@ -63,6 +68,7 @@ def page_dashboard():
 
     now = time.strftime("%d.%m.%Y %H:%M")
 
+    # ── Kompakt KPI şeridi (tekli büyük kutular yerine tek satır, profesyonel) ──
     stat_bar = stat_strip([
         ("İzlenen Segment", f"{n_seg:,}", f"{n_raw:,} ham ölçüm", None),
         ("Aktif Anomali", f"{n_anomaly:,}", f"{anom_ratio} oran", "red"),

@@ -1,3 +1,5 @@
+"""Ortak arayüz yardımcıları — sayfalar arası tekrar eden Plotly düzeni ve UI
+bileşenleri tek kaynakta toplanır (app.py, power/synthetic/esa/ablation sayfaları)."""
 from dash import html
 from dash_iconify import DashIconify
 
@@ -28,6 +30,11 @@ _STAT_ACCENT = {"blue": "#2563EB", "red": "#EF4444", "green": "#10B981",
 
 
 def stat_strip(items):
+    """Kompakt KPI şeridi: tekli büyük kutular yerine tek satır, profesyonel.
+
+    items: [(label, value, sub|None, accent|None), ...]
+    accent renk adı ("red"/"green"/...) ya da hex (#...) olabilir; None ise nötr.
+    """
     row = []
     for i, it in enumerate(items):
         label, value = it[0], it[1]

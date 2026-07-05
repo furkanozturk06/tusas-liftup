@@ -1,3 +1,9 @@
+"""
+ESA Feature Extraction Pipeline Sayfasi
+========================================
+Ham segments.csv verisinden ESA OPSSAT-AD 18 handcrafted feature
+çıkarımı, görselleştirilmesi ve analiz pipeline'ina aktarimi.
+"""
 
 import os, sys, io, base64
 import numpy as np
@@ -57,6 +63,21 @@ def get_esa_pipeline_layout():
             html.Div("ESA Feature Extraction Pipeline", className="page-title"),
             html.Div("Ham telemetri segmentlerinden 18 handcrafted özellik çıkarımı",
                      className="page-subtitle"),
+        ]),
+
+        html.Div(className="panel mb-4",
+                 style={"borderLeft": "4px solid #06B6D4", "padding": "16px"}, children=[
+            html.Div(style={"display": "flex", "alignItems": "center", "gap": "12px"}, children=[
+                _icon("mdi:information-outline", 24, "#06B6D4"),
+                html.Div([
+                    html.Div("Ruszczak et al. (2024)",
+                             style={"fontWeight": "600", "color": "#1E293B", "fontSize": "14px"}),
+                    html.Div("\"The OPS-SAT benchmark for detecting anomalies in satellite telemetry\" (arXiv:2407.04730)",
+                             style={"color": "#475569", "fontSize": "12px"}),
+                    html.Div("Bu pipeline, makalede tanimlanan 18 handcrafted feature'i segments.csv formatindan cikarir.",
+                             style={"color": "#64748B", "fontSize": "11px", "marginTop": "4px"}),
+                ]),
+            ]),
         ]),
 
         dbc.Row([
@@ -133,6 +154,7 @@ def get_esa_pipeline_layout():
 
 
 def _build_existing_dataset_preview():
+    """Mevcut dataset.csv varsa onizleme olustur."""
     if not os.path.exists(DATASET_PATH):
         return html.Div()
     try:
@@ -160,6 +182,7 @@ def _build_existing_dataset_preview():
 
 
 def _build_extraction_results(features_df, source_label):
+    """Cikarim sonuclarini görselleştirir."""
     n = len(features_df)
     n_anom = int(features_df["anomaly"].sum()) if "anomaly" in features_df.columns else 0
     n_channels = features_df["channel"].nunique() if "channel" in features_df.columns else 0

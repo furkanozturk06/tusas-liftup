@@ -1,3 +1,4 @@
+"""Uydu Telemetri Anomali Tespit Arayüzü"""
 import os
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
@@ -69,6 +70,9 @@ app.layout = html.Div(id="app-root", children=[
             html.Div("Henüz anomali seçilmedi.", className="info-box")
         ])
     ]),
+    # Canlı İzleme overlay olarak tutulur (Sonuçlar/Detay gibi): başka sayfaya gidince
+    # DOM'dan silinmez, yalnızca gizlenir; dönüldüğünde bırakıldığı gibi (grafik/alarm/
+    # çalışma durumu) korunur. Bu yüzden yeniden-kurma (restore) gerekmez.
     html.Div(id="live-overlay", className="main-content",
              style={"display": "none"}, children=live.page_live()),
 ])
@@ -98,6 +102,7 @@ def render_page(page_id):
     if page_id == "detail":
         return html.Div(), hide, hide, show, hide
     if page_id == "live":
+        # Overlay'i göster; içerik DOM'da kalıcı olduğu için yeniden kurulmaz.
         return html.Div(), hide, hide, hide, show
     return PAGES.get(page_id, dashboard.page_dashboard)(), show, hide, hide, hide
 

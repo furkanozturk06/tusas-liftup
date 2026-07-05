@@ -797,9 +797,3 @@ div[class*="slider"] input[type="number"] {
     color: #64748B;
 }
 
-/* Mavi/dolu butonlardaki ikonlar beyaz gorunsun (gri ikon mavi zeminde kayboluyordu) */
-.btn-primary svg, .btn-action-primary svg, .live-controls-right .btn-primary svg,
-.btn-primary .iconify, .btn-action-primary .iconify {
-  color: #FFFFFF !important;
-  fill: #FFFFFF !important;
-}

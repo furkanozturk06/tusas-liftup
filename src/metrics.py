@@ -1,3 +1,30 @@
+"""
+OPS-SAT Benchmark Metrik Modulu
+================================
+
+Ruszczak et al. (2024) "The OPS-SAT benchmark for detecting anomalies in
+satellite telemetry" makalesinde tanimlanan 7 ZORUNLU kalite metrigini
+hesaplar. Tum anomali tespit sonuclari bu metriklerle raporlanmali ve
+karsilastirma tablolari **AUC_PR**'a gore siralanmalidir.
+
+Zorunlu 7 metrik (hepsi maksimize edilir):
+    Accuracy, Precision, Recall, F1, MCC, AUC_ROC, AUC_PR
+    - MCC (Matthews Correlation Coefficient): dengesiz siniflandirmada
+      tercih edilen olcut (Chicco & Jurman 2020). Aralik [-1, 1].
+    - AUC_PR (Area under Precision-Recall): makalenin birincil siralama
+      olcutu; sklearn'de average_precision_score'a karsilik gelir.
+    - Diger metrikler [0, 1] araligindadir.
+
+Ek (operasyonel) metrikler de saglanir: FAR (yanlis alarm orani),
+FNR (kacirma orani), Inf.Time. Bunlar benchmark'in 7 zorunlu metrigine
+DAHIL DEGILDIR ancak on-board operasyon tartismasi icin faydalidir.
+
+Kullanim:
+    from metrics import compute_metrics, metrics_table, BENCHMARK_METRICS
+
+    m = compute_metrics(y_true, y_pred, y_score)   # tek model
+    df = metrics_table(all_metrics)                # AUC_PR sirali tablo
+"""
 
 import numpy as np
 from sklearn.metrics import (
@@ -12,6 +39,19 @@ PRIMARY_SORT_METRIC = "AUC_PR"
 
 
 def compute_metrics(y_true, y_pred, y_score=None, inf_time_ms=None):
+    """Tek bir modelin tahminleri icin 7 zorunlu metrik + ek metrikleri hesaplar.
+
+    Args:
+        y_true: Gercek etiketler (0=nominal, 1=anomali).
+        y_pred: Ikili tahminler (0/1).
+        y_score: Anomali olasiligi / karar skoru (AUC_ROC ve AUC_PR icin).
+                 None ise AUC metrikleri NaN olur.
+        inf_time_ms: Tek ornek icin cikarim suresi (ms), opsiyonel.
+
+    Returns:
+        dict — 7 zorunlu metrik + FAR, FNR (+ varsa Inf.Time). AUC metrikleri
+               hesaplanamazsa NaN doner.
+    """
     y_true = np.asarray(y_true).astype(int)
     y_pred = np.asarray(y_pred).astype(int)
 
@@ -52,6 +92,16 @@ def compute_metrics(y_true, y_pred, y_score=None, inf_time_ms=None):
 
 
 def metrics_table(all_metrics, sort_by=PRIMARY_SORT_METRIC, ascending=False):
+    """Cok modelli metrik sozlugunu siralanmis bir DataFrame'e cevirir.
+
+    Args:
+        all_metrics: {model_adi: metrik_dict} sozlugu.
+        sort_by: Siralama olcutu (varsayilan AUC_PR — makaleyle ayni).
+        ascending: Artan siralama (varsayilan False = en iyi ustte).
+
+    Returns:
+        pandas.DataFrame — satirlar model, sutunlar metrikler, sort_by'a gore sirali.
+    """
     import pandas as pd
     df = pd.DataFrame(all_metrics).T
     extra = [c for c in df.columns if c not in BENCHMARK_METRICS]
@@ -63,6 +113,7 @@ def metrics_table(all_metrics, sort_by=PRIMARY_SORT_METRIC, ascending=False):
 
 
 def format_metrics_line(name, m):
+    """Tek satirlik ozet (konsol ciktisi icin)."""
     def g(k):
         v = m.get(k, float("nan"))
         return f"{v:.3f}" if isinstance(v, (int, float)) and not np.isnan(v) else "  nan"

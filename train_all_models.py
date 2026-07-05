@@ -1,3 +1,12 @@
+"""
+Tum Modelleri Egit ve Kaydet
+=============================
+dataset.csv uzerinden 64 modelin egitimini yapar,
+model dosyalarini, scaler'i, test verisini, esikleri ve metrikleri kaydeder.
+
+Kullanim:
+    python train_all_models.py
+"""
 
 import os, sys, json, warnings, time
 import numpy as np
@@ -67,6 +76,7 @@ print("Scaler, test_data, segment_features.parquet kaydedildi.\n")
 ALL_METRICS = {}
 
 def calc_metrics(name, y_true, y_pred, y_score=None, inf_time_ms=None):
+    """OPS-SAT benchmark'in 7 zorunlu metrigini (MCC + AUC_PR dahil) hesaplar."""
     m = compute_metrics(y_true, y_pred, y_score, inf_time_ms=inf_time_ms)
     ALL_METRICS[name] = m
     return m
@@ -206,6 +216,7 @@ from sklearn.decomposition import PCA as PCA_Model
 THRESHOLDS = {}
 
 def train_unsup_sklearn(name, model, fname, score_fn):
+    """score_fn: X -> anomaly_scores (yuksek = anomali)"""
     t0 = time.time()
     try:
         model.fit(X_train_s)
@@ -348,11 +359,18 @@ try:
 except ImportError:
     print("  LMDD                           ATLANACAK")
 
+# Not: Kanonik dışı PyOD deep dedektörleri (SO_GAAL, MO_GAAL, DeepSVDD, LUNAR, DIF)
+# kanonik 42 modele DAHİL DEĞİLDİR; bilinçli olarak burada eğitilmez (aksi halde
+# kurulu oldukları ortamda final_comparison.json'a sızarlardı).
 
 if "MLP" in SUP_MODELS:
     joblib.dump(SUP_MODELS["MLP"], os.path.join(MODEL_DIR, "mlp_sklearn_model.joblib"))
 
 
+# Not: Derin sıralı modeller (CNN1D, TCN) artık 18-özellik sözde-dizi yerine HAM
+# telemetri sinyali üzerinde NB04 Bölüm 9'da eğitilir (deep_sequence_comparison.json).
+# Bu kanonik motor yalnız 42 tabular modeli üretir; eski 18-özellik derin-dizi bloğu
+# (15 modeli ALL_METRICS'e ekleyip 42'yi 57'ye çıkaran) kaldırılmıştır.
 
 
 print("\n" + "─" * 60)

@@ -1,3 +1,10 @@
+"""
+Model Karşılaştırma ve Değerlendirme Modülü (Evaluator)
+========================================================
+
+Tüm gözetimli ve gözetimsiz algoritmaların performanslarını karşılaştırmak,
+zamanlama testleri yapmak ve kapsamlı grafikler oluşturmak için kullanılır.
+"""
 
 import os
 import time
@@ -32,6 +39,7 @@ class ModelEvaluator:
         self.probabilities = {}
         
     def load_models(self, supervised_list: List[str], unsupervised_list: List[str]):
+        """Belirtilen modelleri diskten yükler."""
         print("Modeller yükleniyor...")
         
         for name in supervised_list:
@@ -67,6 +75,7 @@ class ModelEvaluator:
         print(f"Yüklenen Modeller: {list(self.models.keys())}")
 
     def evaluate_all_models(self, X_test: np.ndarray, y_test: np.ndarray):
+        """Tüm modeller için tahminler yapar ve metrikleri hesaplar."""
         print("Test seti üzerinde metrikler ve çıkarım (inference) hızları hesaplanıyor...")
         
         for name, model in self.models.items():

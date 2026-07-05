@@ -1,3 +1,9 @@
+"""
+Sentetik Veri Laboratuvari Sayfasi
+===================================
+ESA OPS-SAT benzeri sentetik uydu telemetri verisi üretimi,
+görselleştirilmesi ve analiz pipeline'ina aktarimi.
+"""
 
 import os, sys, io, json
 import numpy as np
@@ -23,6 +29,8 @@ CHANNEL_INFO = {
 }
 
 def _build_ks_panel(synth_feats):
+    """Üretilen sentetik özellikleri gerçek dataset.csv ile karşılaştırır (özellik
+    başına Kolmogorov-Smirnov mesafesi). Gerçek veri yoksa None döner."""
     real_path = os.path.join(ROOT, "data", "raw", "dataset.csv")
     if not os.path.exists(real_path):
         return None

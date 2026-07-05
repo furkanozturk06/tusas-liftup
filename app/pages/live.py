@@ -1,3 +1,4 @@
+"""Canli Izleme sayfasi: layout + callback'ler."""
 import os
 import io
 import json
@@ -23,6 +24,7 @@ from core.state import (MODELS, THRESHOLDS, SCALER, TEST_DATA, ALL_METRICS, FEAT
 
 
 def _model_label(m):
+    """Model adı + temel performans (operatör hangi modeli seçeceğine karar verebilsin)."""
     mt = ALL_METRICS.get(m, {})
     f1, ap = mt.get("F1"), mt.get("AUC_PR")
     if f1 is not None and ap is not None:
@@ -31,6 +33,11 @@ def _model_label(m):
 
 
 def _alarm_card(rec):
+    """Tespit edilen bir anomali için tıklanabilir detaylı alarm kartı.
+
+    Tıklanınca (Analiz/Sonuçlar tablosundaki gibi) ilgili anomalinin Anomali Detay
+    sayfasına gidilir; karta değer / okuma no / model bilgisi de gömülüdür.
+    """
     sev_class = "critical" if rec.get("score", 0) > 0.8 else "warning"
     val = rec.get("value")
     val_str = f"{val:.4g}" if isinstance(val, (int, float)) else str(val)
@@ -75,6 +82,9 @@ def _empty_score_fig():
 
 
 def live_detail_records(state):
+    """Canlı izleme anomalilerini Sonuçlar/Detay tablosu formatında (NO sıralı)
+    kayıtlara çevirir. Sonuçlar sayfası ve alarm-tıklama bu kayıtları paylaşır;
+    her anomali gerçekleştiği segmente ve özellik matrisindeki satır konumuna eşlenir."""
     anomalies = (state or {}).get("anomalies", [])
     if not anomalies:
         return []
@@ -99,10 +109,15 @@ def live_detail_records(state):
 
 def page_live():
     channels = LIVE_DATA['channel'].unique().tolist() if not LIVE_DATA.empty and 'channel' in LIVE_DATA.columns else []
+    # Çalıştırılabilir (yüklü) TÜM modeller listelensin: kanonik liste filtresi yerine
+    # doğrudan MODELS üzerinden, performansa göre sıralı (en iyi üstte) — böylece hiçbir
+    # runnable model dropdown dışında kalmaz.
     live_models = sorted(MODELS, key=lambda n: ALL_METRICS.get(n, {}).get("AUC_PR", 0), reverse=True)
     default_model = next((m for m in ["HistGradientBoosting", "RandomForest", "IsolationForest"] if m in MODELS),
                          live_models[0] if live_models else None)
 
+    # Grafikler boş başlar; Canlı İzleme bir overlay olduğu için (app.layout'ta) DOM'da
+    # kalıcıdır — başka sekmeye gidip dönünce grafik/alarm/çalışma durumu korunur.
     fig_sig = _empty_signal_fig()
     fig_score = _empty_score_fig()
 
@@ -287,6 +302,7 @@ def update_live_sim(n_int, state, channel, model_name, speed, current_alarms):
         norm_score = 0
         is_anom = False
 
+    # State'i zenginleştir: aktif kanal/model + skor geçmişi (sayfaya dönünce restore_live kullanır)
     state["channel"] = channel
     state["model"] = model_name
     state.setdefault("scores", []).append([times[-1], float(norm_score)])
@@ -295,6 +311,11 @@ def update_live_sim(n_int, state, channel, model_name, speed, current_alarms):
     sig_x = [times]
     sig_y = [vals]
 
+    # Anomali iz'ini sinyalle AYNI uzunlukta besle (ayni x'ler, yalniz anomali
+    # noktasında y dolu, gerisi None). Boylece iki iz maxpoints=200 ile ayni
+    # pencerede birlikte kayar; eski anomali noktaları cizgiyle birlikte soldan
+    # dusulur (aksi halde stale anomali isaretleri x-eksenini gererek cizgiyi
+    # "soldan kayboluyor" gibi gosteriyordu).
     anom_marks = [None] * len(times)
     if is_anom and times:
         anom_marks[-1] = vals[-1]
@@ -340,6 +361,13 @@ def update_live_sim(n_int, state, channel, model_name, speed, current_alarms):
     prevent_initial_call=True,
 )
 def open_live_anomaly_detail(clicks, state):
+    """Bir canlı alarm kartına tıklanınca o anomalinin Anomali Detay sayfasını açar.
+
+    Canlı anomaliler Sonuçlar listesini ve detay gezinme sırasını ETKİLEMEZ:
+    anomaly-list yalnızca tıklanan tek anomaliyi içerir, böylece detaydaki
+    Önceki/Sonraki tuşları canlı izleme anomalilerini dolaşmaz (1/1 gösterir).
+    Yalnızca gerçek bir tıklamada çalışır: izleme sürerken yeni alarm kartı
+    eklenmesi (n_clicks=0) callback'i tetiklese de işlem yapılmaz."""
     trig = ctx.triggered
     if not trig or not trig[0].get("value") or not ctx.triggered_id:
         return no_update, no_update, no_update
@@ -350,5 +378,5 @@ def open_live_anomaly_detail(clicks, state):
                 if a.get("id") == target_id and i < len(recs)), None)
     if sel is None:
         return no_update, no_update, no_update
-    sel = dict(sel); sel["NO"] = 1
+    sel = dict(sel); sel["NO"] = 1   # tek öğeli liste; sayaç "1 / 1" gösterir
     return sel, [sel], "detail"

@@ -1,3 +1,4 @@
+"""Model loading and prediction utilities."""
 import os, json, joblib, warnings, logging
 import numpy as np
 import pandas as pd
@@ -35,11 +36,14 @@ def _safe_load(path):
 
 
 def _kload(path):
+    """Keras modelini güvenli şekilde yükler (VAE'nin Lambda katmanı için safe_mode=False)."""
     from tensorflow.keras.models import load_model
     return load_model(path, compile=False, safe_mode=False)
 
 
 def _keras_feature_dim(model):
+    """Keras modelinin beklediği düz özellik sayısını döndürür.
+    Dense/MLP -> (None, F) => F;  sıralı -> (None, T, 1) => T*1 = T. Bilinmezse None."""
     try:
         shp = model.input_shape
         if isinstance(shp, list):
@@ -54,6 +58,7 @@ def _keras_feature_dim(model):
 
 
 def load_all():
+    """Return (models_dict, thresholds_dict, scaler, test_data)."""
     models = {}
     for name, fname in [("RandomForest", "rf_model.joblib"), ("XGBoost", "xgb_model.joblib"),
                         ("SVM", "svm_model.joblib"), ("LightGBM", "lightgbm_model.joblib"),
@@ -137,6 +142,7 @@ def load_all():
 
 
 def predict(model, name, X, thresholds, threshold_mult=1.0):
+    """Return (predictions, scores) for a single model."""
     if name in SEQUENCE_MODELS:
         X_seq = np.asarray(X, dtype="float32").reshape((X.shape[0], X.shape[1], 1))
         sc = model.predict(X_seq, verbose=0).flatten()
@@ -190,6 +196,16 @@ def predict(model, name, X, thresholds, threshold_mult=1.0):
 
 
 def load_metrics():
+    """Kanonik metrikleri yükler (7 metrik: Accuracy/Precision/Recall/F1/MCC/
+    AUC_ROC/AUC_PR + FAR/FNR). İki kaynak birleştirilir:
+      - final_comparison.json        : 42 tabular model (18 ESA özelliği)
+      - deep_sequence_comparison.json: 2 derin sıralı model (CNN1D, TCN; ham sinyal)
+    Toplam Ψ-ölçümlü 44 model. ESA-ADB baseline'ları (2) literatür olduğu için
+    metrik içermez; ayrı listelenir.
+
+    Not: Eski şemalı adv_metrics.json (tireli 'AUC-ROC', MCC/AUC_PR yok) bilinçli
+    olarak BİRLEŞTİRİLMEZ — kanonik anahtarları bozar ve karışık şema yaratırdı.
+    """
     metrics = {}
     p1 = os.path.join(ROOT, "reports", "metrics", "final_comparison.json")
     if os.path.exists(p1):
@@ -197,6 +213,7 @@ def load_metrics():
             metrics.update(json.load(f))
     else:
         log.warning("final_comparison.json bulunamadı: %s", p1)
+    # Ham-sinyal derin sıralı modeller (NB04 Bölüm 6 çıktısı; varsa birleştir)
     p2 = os.path.join(ROOT, "reports", "metrics", "deep_sequence_comparison.json")
     if os.path.exists(p2):
         try:

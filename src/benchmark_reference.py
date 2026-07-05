@@ -1,3 +1,18 @@
+"""
+OPS-SAT Benchmark Referans Sonuçları (Ruszczak et al. 2024, Tablo 3)
+====================================================================
+
+"The OPS-SAT benchmark for detecting anomalies in satellite telemetry"
+(arXiv:2407.04730) makalesinin Tablo 3'ünde yayımlanan 30 algoritmanın
+resmi Ψ test seti üzerindeki sonuçları. Tüm değerler PyOD varsayılan
+parametreleriyle (contamination=0.2), fine-tune YAPILMADAN elde edilmiştir.
+
+Bu modül, kendi kanonik sonuçlarımızı (train_all_models.py → resmi split,
+18 ESA özelliği, 7 metrik) makale baseline'ı ile aynı Ψ üzerinde
+karşılaştırmak için kullanılır (NB12).
+
+Sütunlar: AUC_PR, AUC_ROC, Accuracy, F1, Precision, Recall, MCC
+"""
 
 _COLS = ["AUC_PR", "AUC_ROC", "Accuracy", "F1", "Precision", "Recall", "MCC"]
 

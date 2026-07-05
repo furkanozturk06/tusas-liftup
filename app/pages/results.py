@@ -1,3 +1,4 @@
+"""Sonuclar sayfasi: layout + callback'ler."""
 import os
 import io
 import json
@@ -32,6 +33,8 @@ def page_results():
 
 
 def _table_panel(table_data):
+    """Tıklanabilir anomali tablosu paneli. select_anomaly bu tablonun active_cell'ini
+    dinler; bir satıra tıklayınca Anomali Detay açılır (analiz + canlı ortak akış)."""
     return html.Div(className="panel", children=[
         html.Div(className="panel-title", children=[icon("mdi:format-list-bulleted", 16),
                                                     f"Anomali Listesi ({len(table_data)} kayıt)"]),
@@ -66,9 +69,13 @@ def _table_panel(table_data):
           State("uploaded-data", "data"),
           prevent_initial_call=True)
 def update_results(pred_json, page, data_json):
+    # Başka sayfaya geçişte gereksiz yeniden-render önlenir
     if ctx.triggered_id == "current-page" and page != "results":
         return no_update
 
+    # Not: Canlı İzleme anomalileri Sonuçlar listesini ETKİLEMEZ; yalnızca yüklenen
+    # veri üzerinde yapılan analiz sonuçları listelenir. (Canlı alarmlar kendi
+    # panelinden tıklanınca yine de Anomali Detay'a gider.)
     if not pred_json or not json.loads(pred_json):
         return html.Div(className="info-box", children=["Henüz analiz yapılmadı."])
 
@@ -130,6 +137,9 @@ def update_results(pred_json, page, data_json):
                            "Kanal": channel_label(ch), "_channel": ch, "Skor": f"{score_ensemble[idx]:.2f}",
                            "Şiddet": sev, "Detay": "İncele", "_idx": int(idx)})
 
+    # Şiddet sayımları DOĞRUDAN tablodan hesaplanır — böylece kart sayıları listedeki
+    # kayıtlarla birebir uyuşur (eskiden tablo 100 ile sınırlıyken sayımlar tüm
+    # anomalilerden geliyordu ve "354 Kritik ama 112 kayıt" gibi uyuşmazlık oluyordu).
     n_shown = len(table_data)
     n_crit = sum(1 for r in table_data if r["Şiddet"] == "Kritik")
     n_warn = sum(1 for r in table_data if r["Şiddet"] == "Uyarı")
@@ -163,6 +173,7 @@ def update_results(pred_json, page, data_json):
           Input("results-table", "active_cell"), State("results-table", "data"), prevent_initial_call=True)
 def select_anomaly(active_cell, data):
     if not active_cell or not data: return no_update, no_update, no_update, "Detay görüntülemek için tabloda bir anomali satırına tıklayın."
+    # Satırdaki herhangi bir hücreye tıklamak detayı açar (yalnız "Detay" kolonu değil).
     selected = data[active_cell["row"]]
     return selected, data, "detail", no_update
 
