@@ -1,0 +1,314 @@
+{
+  "LogisticRegression": {
+    "Accuracy": 0.9357,
+    "Precision": 0.9341,
+    "Recall": 0.7522,
+    "F1": 0.8333,
+    "FAR": 0.0144,
+    "AUC-ROC": 0.9695
+  },
+  "Ridge": {
+    "Accuracy": 0.9112,
+    "Precision": 0.9342,
+    "Recall": 0.6283,
+    "F1": 0.7513,
+    "FAR": 0.012,
+    "AUC-ROC": 0.9549
+  },
+  "SGD": {
+    "Accuracy": 0.9149,
+    "Precision": 0.9857,
+    "Recall": 0.6106,
+    "F1": 0.7541,
+    "FAR": 0.0024,
+    "AUC-ROC": 0.9625
+  },
+  "NaiveBayes": {
+    "Accuracy": 0.9112,
+    "Precision": 0.9459,
+    "Recall": 0.6195,
+    "F1": 0.7487,
+    "FAR": 0.0096,
+    "AUC-ROC": 0.9256
+  },
+  "LDA": {
+    "Accuracy": 0.9074,
+    "Precision": 0.9324,
+    "Recall": 0.6106,
+    "F1": 0.738,
+    "FAR": 0.012,
+    "AUC-ROC": 0.9529
+  },
+  "QDA": {
+    "Accuracy": 0.9357,
+    "Precision": 0.9341,
+    "Recall": 0.7522,
+    "F1": 0.8333,
+    "FAR": 0.0144,
+    "AUC-ROC": 0.9725
+  },
+  "DecisionTree": {
+    "Accuracy": 0.9433,
+    "Precision": 0.8952,
+    "Recall": 0.8319,
+    "F1": 0.8624,
+    "FAR": 0.0264,
+    "AUC-ROC": 0.9097
+  },
+  "KNN": {
+    "Accuracy": 0.9565,
+    "Precision": 0.9787,
+    "Recall": 0.8142,
+    "F1": 0.8889,
+    "FAR": 0.0048,
+    "AUC-ROC": 0.9659
+  },
+  "LSVC": {
+    "Accuracy": 0.9168,
+    "Precision": 0.9859,
+    "Recall": 0.6195,
+    "F1": 0.7609,
+    "FAR": 0.0024,
+    "AUC-ROC": 0.9618
+  },
+  "RandomForest": {
+    "Accuracy": 0.9716,
+    "Precision": 0.9804,
+    "Recall": 0.885,
+    "F1": 0.9302,
+    "FAR": 0.0048,
+    "AUC-ROC": 0.9861
+  },
+  "ExtraTrees": {
+    "Accuracy": 0.9735,
+    "Precision": 0.9714,
+    "Recall": 0.9027,
+    "F1": 0.9358,
+    "FAR": 0.0072,
+    "AUC-ROC": 0.9938
+  },
+  "GradientBoosting": {
+    "Accuracy": 0.9603,
+    "Precision": 0.951,
+    "Recall": 0.8584,
+    "F1": 0.9023,
+    "FAR": 0.012,
+    "AUC-ROC": 0.98
+  },
+  "HistGradientBoosting": {
+    "Accuracy": 0.9698,
+    "Precision": 0.9533,
+    "Recall": 0.9027,
+    "F1": 0.9273,
+    "FAR": 0.012,
+    "AUC-ROC": 0.9888
+  },
+  "AdaBoost": {
+    "Accuracy": 0.9395,
+    "Precision": 0.901,
+    "Recall": 0.8053,
+    "F1": 0.8505,
+    "FAR": 0.024,
+    "AUC-ROC": 0.9696
+  },
+  "Bagging": {
+    "Accuracy": 0.9679,
+    "Precision": 0.98,
+    "Recall": 0.8673,
+    "F1": 0.9202,
+    "FAR": 0.0048,
+    "AUC-ROC": 0.9767
+  },
+  "SVM": {
+    "Accuracy": 0.9641,
+    "Precision": 0.9608,
+    "Recall": 0.8673,
+    "F1": 0.9116,
+    "FAR": 0.0096,
+    "AUC-ROC": 0.9813
+  },
+  "LightGBM": {
+    "Accuracy": 0.9584,
+    "Precision": 0.9252,
+    "Recall": 0.8761,
+    "F1": 0.9,
+    "FAR": 0.0192,
+    "AUC-ROC": 0.9889
+  },
+  "MLP": {
+    "Accuracy": 0.9716,
+    "Precision": 0.9537,
+    "Recall": 0.9115,
+    "F1": 0.9321,
+    "FAR": 0.012,
+    "AUC-ROC": 0.9913
+  },
+  "Voting Ensemble": {
+    "Accuracy": 0.9754,
+    "Precision": 0.9808,
+    "Recall": 0.9027,
+    "F1": 0.9401,
+    "FAR": 0.0048,
+    "AUC-ROC": 0.993
+  },
+  "Stacking Ensemble": {
+    "Accuracy": 0.9452,
+    "Precision": 0.9667,
+    "Recall": 0.7699,
+    "F1": 0.8571,
+    "FAR": 0.0072,
+    "AUC-ROC": 0.9747
+  },
+  "IsolationForest": {
+    "Accuracy": 0.7108,
+    "Precision": 0.3113,
+    "Recall": 0.292,
+    "F1": 0.3014,
+    "FAR": 0.1755,
+    "AUC-ROC": 0.6651
+  },
+  "OneClassSVM": {
+    "Accuracy": 0.775,
+    "Precision": 0.4717,
+    "Recall": 0.4425,
+    "F1": 0.4566,
+    "FAR": 0.1346,
+    "AUC-ROC": 0.6458
+  },
+  "KMeans": {
+    "Accuracy": 0.7788,
+    "Precision": 0.4811,
+    "Recall": 0.4513,
+    "F1": 0.4658,
+    "FAR": 0.1322,
+    "AUC-ROC": 0.7129
+  },
+  "LOF": {
+    "Accuracy": 0.8015,
+    "Precision": 0.5377,
+    "Recall": 0.5044,
+    "F1": 0.5205,
+    "FAR": 0.1178,
+    "AUC-ROC": 0.7469
+  },
+  "GMM": {
+    "Accuracy": 0.6919,
+    "Precision": 0.2642,
+    "Recall": 0.2478,
+    "F1": 0.2557,
+    "FAR": 0.1875,
+    "AUC-ROC": 0.6496
+  },
+  "EllipticEnvelope": {
+    "Accuracy": 0.5974,
+    "Precision": 0.0283,
+    "Recall": 0.0265,
+    "F1": 0.0274,
+    "FAR": 0.2476,
+    "AUC-ROC": 0.6061
+  },
+  "PCA": {
+    "Accuracy": 0.741,
+    "Precision": 0.3868,
+    "Recall": 0.3628,
+    "F1": 0.3744,
+    "FAR": 0.1562,
+    "AUC-ROC": 0.7266
+  },
+  "DBSCAN": {
+    "Accuracy": 0.828,
+    "Precision": 0.6038,
+    "Recall": 0.5664,
+    "F1": 0.5845,
+    "FAR": 0.101,
+    "AUC-ROC": 0.8648
+  },
+  "ECOD": {
+    "Accuracy": 0.7146,
+    "Precision": 0.3362,
+    "Recall": 0.3451,
+    "F1": 0.3406,
+    "FAR": 0.1851,
+    "AUC-ROC": 0.6373
+  },
+  "COPOD": {
+    "Accuracy": 0.6919,
+    "Precision": 0.2596,
+    "Recall": 0.2389,
+    "F1": 0.2488,
+    "FAR": 0.1851,
+    "AUC-ROC": 0.6273
+  },
+  "HBOS": {
+    "Accuracy": 0.6465,
+    "Precision": 0.1509,
+    "Recall": 0.1416,
+    "F1": 0.1461,
+    "FAR": 0.2163,
+    "AUC-ROC": 0.5112
+  },
+  "CBLOF": {
+    "Accuracy": 0.7372,
+    "Precision": 0.3917,
+    "Recall": 0.4159,
+    "F1": 0.4034,
+    "FAR": 0.1755,
+    "AUC-ROC": 0.7017
+  },
+  "ABOD": {
+    "Accuracy": 0.8204,
+    "Precision": 0.5849,
+    "Recall": 0.5487,
+    "F1": 0.5662,
+    "FAR": 0.1058,
+    "AUC-ROC": 0.869
+  },
+  "COF": {
+    "Accuracy": 0.7448,
+    "Precision": 0.4276,
+    "Recall": 0.5752,
+    "F1": 0.4906,
+    "FAR": 0.2091,
+    "AUC-ROC": 0.7258
+  },
+  "SOD": {
+    "Accuracy": 0.7051,
+    "Precision": 0.3951,
+    "Recall": 0.7168,
+    "F1": 0.5094,
+    "FAR": 0.2981,
+    "AUC-ROC": 0.7688
+  },
+  "SOS": {
+    "Accuracy": 0.707,
+    "Precision": 0.2717,
+    "Recall": 0.2212,
+    "F1": 0.2439,
+    "FAR": 0.1611,
+    "AUC-ROC": 0.5309
+  },
+  "LODA": {
+    "Accuracy": 0.6408,
+    "Precision": 0.1593,
+    "Recall": 0.1593,
+    "F1": 0.1593,
+    "FAR": 0.2284,
+    "AUC-ROC": 0.455
+  },
+  "INNE": {
+    "Accuracy": 0.7883,
+    "Precision": 0.5043,
+    "Recall": 0.5221,
+    "F1": 0.513,
+    "FAR": 0.1394,
+    "AUC-ROC": 0.7543
+  },
+  "LMDD": {
+    "Accuracy": 0.7977,
+    "Precision": 1.0,
+    "Recall": 0.0531,
+    "F1": 0.1008,
+    "FAR": 0.0,
+    "AUC-ROC": 0.5166
+  }
+}
