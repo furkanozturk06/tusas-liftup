@@ -80,7 +80,7 @@ Uydu-Telemetri-Anomali-Tespiti/
 
 ```bash
 git clone https://github.com/furkanozturk06/tusas-liftup.git
-cd Uydu-Telemetri-Anomali-Tespiti
+cd tusas-liftup
 
 # pip ile
 python -m venv venv
