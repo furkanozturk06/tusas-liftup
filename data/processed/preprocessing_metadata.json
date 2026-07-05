@@ -1,0 +1,40 @@
+{
+    "class": "TelemetriPreprocessor",
+    "is_fitted": true,
+    "parameters": {
+        "impute_method": "none",
+        "filter_method": null,
+        "outlier_method": "mod_zscore",
+        "scaling_method": "robust",
+        "window_length": 51,
+        "polyorder": 3,
+        "outlier_threshold": 4.0
+    },
+    "stats": {
+        "impute_method": "none",
+        "filter_method": null,
+        "outlier_method": "mod_zscore",
+        "scaling_method": "robust",
+        "outliers_detected": {
+            "mean": 192,
+            "var": 192,
+            "std": 192,
+            "kurtosis": 30,
+            "skew": 16,
+            "n_peaks": 123,
+            "duration": 9,
+            "len": 50,
+            "gaps_squared": 29,
+            "len_weighted": 8,
+            "var_div_duration": 192,
+            "var_div_len": 192,
+            "smooth10_n_peaks": 54,
+            "smooth20_n_peaks": 120,
+            "diff_peaks": 114,
+            "diff2_peaks": 49,
+            "diff_var": 197,
+            "diff2_var": 206
+        },
+        "missing_filled": 0
+    }
+}

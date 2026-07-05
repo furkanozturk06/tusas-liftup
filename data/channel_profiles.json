@@ -1,0 +1,160 @@
+{
+  "CADC0872": {
+    "n_segments": 546,
+    "anomaly_ratio": 0.23992673992673993,
+    "signal_mean": 9.843981817423186e-07,
+    "signal_std": 2.147406394407348e-05,
+    "signal_min": -8.80224e-05,
+    "signal_max": 6.52107e-05,
+    "signal_median": 2.42945e-07,
+    "sampling_modes": {
+      "1": 52110,
+      "5": 14709
+    },
+    "seg_len_mean": 122.37912087912088,
+    "seg_len_std": 114.5697217472578,
+    "seg_len_min": 14,
+    "seg_len_max": 687,
+    "seg_dur_mean": 228.76190476190476
+  },
+  "CADC0892": {
+    "n_segments": 211,
+    "anomaly_ratio": 0.16113744075829384,
+    "signal_mean": 0.25458148156341653,
+    "signal_std": 0.3314990454396832,
+    "signal_min": 0.0,
+    "signal_max": 1.5708,
+    "signal_median": 0.0672288,
+    "sampling_modes": {
+      "1": 48903,
+      "5": 879
+    },
+    "seg_len_mean": 235.93364928909952,
+    "seg_len_std": 92.5124720315114,
+    "seg_len_min": 27,
+    "seg_len_max": 470,
+    "seg_dur_mean": 263.85781990521326
+  },
+  "CADC0874": {
+    "n_segments": 194,
+    "anomaly_ratio": 0.3556701030927835,
+    "signal_mean": 3.2319480889646455e-06,
+    "signal_std": 2.0050496475917902e-05,
+    "signal_min": -4.83365e-05,
+    "signal_max": 0.000100753,
+    "signal_median": 2.33226e-06,
+    "sampling_modes": {
+      "1": 51823,
+      "5": 6896
+    },
+    "seg_len_mean": 302.67525773195877,
+    "seg_len_std": 255.99235478016092,
+    "seg_len_min": 37,
+    "seg_len_max": 1040,
+    "seg_dur_mean": 442.6443298969072
+  },
+  "CADC0884": {
+    "n_segments": 158,
+    "anomaly_ratio": 0.0,
+    "signal_mean": 0.4707211429881456,
+    "signal_std": 0.39135597182376614,
+    "signal_min": 0.0,
+    "signal_max": 1.5708,
+    "signal_median": 0.418235,
+    "sampling_modes": {
+      "5": 11810
+    },
+    "seg_len_mean": 74.74683544303798,
+    "seg_len_std": 39.319520234235505,
+    "seg_len_min": 17,
+    "seg_len_max": 173,
+    "seg_dur_mean": 368.9177215189873
+  },
+  "CADC0873": {
+    "n_segments": 593,
+    "anomaly_ratio": 0.17706576728499157,
+    "signal_mean": -1.1322484064375376e-06,
+    "signal_std": 2.085406721516679e-05,
+    "signal_min": -0.000101244,
+    "signal_max": 5.95307e-05,
+    "signal_median": -5.31436e-08,
+    "sampling_modes": {
+      "1": 52302,
+      "5": 15987
+    },
+    "seg_len_mean": 115.15851602023609,
+    "seg_len_std": 111.15889147769889,
+    "seg_len_min": 12,
+    "seg_len_max": 673,
+    "seg_dur_mean": 220.5885328836425
+  },
+  "CADC0886": {
+    "n_segments": 11,
+    "anomaly_ratio": 0.2727272727272727,
+    "signal_mean": 0.18311104997319033,
+    "signal_std": 0.20518801122704033,
+    "signal_min": 0.0,
+    "signal_max": 0.72115,
+    "signal_median": 0.0964357,
+    "sampling_modes": {
+      "5": 373
+    },
+    "seg_len_mean": 33.90909090909091,
+    "seg_len_std": 6.905860488810145,
+    "seg_len_min": 15,
+    "seg_len_max": 39,
+    "seg_dur_mean": 175.9090909090909
+  },
+  "CADC0888": {
+    "n_segments": 252,
+    "anomaly_ratio": 0.23809523809523808,
+    "signal_mean": 0.2654263735996563,
+    "signal_std": 0.33798261162694676,
+    "signal_min": 0.0,
+    "signal_max": 1.30189,
+    "signal_median": 0.0720456,
+    "sampling_modes": {
+      "5": 11640
+    },
+    "seg_len_mean": 46.19047619047619,
+    "seg_len_std": 21.564399718761162,
+    "seg_len_min": 8,
+    "seg_len_max": 97,
+    "seg_dur_mean": 226.29365079365078
+  },
+  "CADC0894": {
+    "n_segments": 144,
+    "anomaly_ratio": 0.14583333333333334,
+    "signal_mean": 0.11357053644373732,
+    "signal_std": 0.20897806812921435,
+    "signal_min": 0.0,
+    "signal_max": 1.40026,
+    "signal_median": 0.00528418,
+    "sampling_modes": {
+      "1": 32027,
+      "5": 3485
+    },
+    "seg_len_mean": 246.61111111111111,
+    "seg_len_std": 230.21744391785668,
+    "seg_len_min": 21,
+    "seg_len_max": 827,
+    "seg_dur_mean": 358.8611111111111
+  },
+  "CADC0890": {
+    "n_segments": 14,
+    "anomaly_ratio": 0.7857142857142857,
+    "signal_mean": 0.24217790258652092,
+    "signal_std": 0.3270848522300281,
+    "signal_min": 0.0,
+    "signal_max": 1.16413,
+    "signal_median": 0.0924375,
+    "sampling_modes": {
+      "5": 549
+    },
+    "seg_len_mean": 39.214285714285715,
+    "seg_len_std": 9.593095044221782,
+    "seg_len_min": 19,
+    "seg_len_max": 51,
+    "seg_dur_mean": 191.21428571428572
+  }
+}

@@ -1,0 +1,128 @@
+# ========================
+# Python
+# ========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ========================
+# Sanal Ortamlar
+# ========================
+venv/
+env/
+.env/
+.venv/
+ENV/
+
+# ========================
+# Jupyter Notebook
+# ========================
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ========================
+# IDE & Editör
+# ========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# ========================
+# İşletim Sistemi
+# ========================
+.DS_Store
+Thumbs.db
+desktop.ini
+*.lnk
+
+# ========================
+# Veri Dosyaları
+# ========================
+data/raw/*.csv
+data/raw/*.json
+data/raw/*.parquet
+data/raw/*.h5
+data/raw/*.hdf5
+data/raw/*.xlsx
+data/raw/*.zip
+data/raw/*.tar.gz
+data/raw/*.gz
+data/processed/*.csv
+data/processed/*.parquet
+data/processed/*.pkl
+data/features/*.csv
+data/features/*.parquet
+data/features/*.pkl
+# Sentetik uretilmis veri (yeniden uretilebilir: Notebook 09)
+data/synthetic/
+
+# ========================
+# Referans makaleler (telif) ve egitim artefaktlari
+# ========================
+resources/
+catboost_info/
+reports/*.csv
+reports/*.html
+
+# ========================
+# Eğitilmiş Modeller
+# ========================
+models/*.pkl
+models/*.h5
+models/*.hdf5
+models/*.pt
+models/*.pth
+models/*.onnx
+models/*.joblib
+models/*.keras
+models/*.sav
+# ham-sinyal derin modeller (train_deep_sequence.py ile yeniden üretilir)
+models/deep_sequence/
+
+# ========================
+# Raporlar (büyük dosyalar)
+# ========================
+reports/figures/*.png
+reports/figures/*.jpg
+reports/figures/*.svg
+reports/figures/*.pdf
+reports/metrics/*.json
+reports/metrics/*.csv
+
+# ========================
+# Log Dosyaları
+# ========================
+*.log
+logs/
+mlruns/
+wandb/
+
+# ========================
+# Ortam Değişkenleri
+# ========================
+.env
+.env.local
+.env.production
+
+# ========================
+# Diğer
+# ========================
+*.bak
+*.tmp
+*.temp
+.cache/

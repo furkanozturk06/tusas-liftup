@@ -1,0 +1,58 @@
+# ========================
+# Veri İşleme
+# ========================
+pandas>=2.0.0
+numpy>=1.24.0
+scipy>=1.10.0
+pyarrow>=14.0.0       # parquet okuma/yazma motoru (read_parquet/to_parquet)
+fastparquet>=2024.2.0 # alternatif parquet motoru
+
+# ========================
+# Makine Öğrenmesi
+# ========================
+scikit-learn>=1.3.0
+imbalanced-learn>=0.11.0
+xgboost>=2.0.0
+lightgbm>=4.0.0
+catboost>=1.2.0
+pyod>=1.1.0          # ECOD, COPOD, HBOS, CBLOF anomali dedektörleri (opsiyonel)
+
+# ========================
+# Derin Öğrenme
+# ========================
+tensorflow>=2.14.0
+
+# ========================
+# Görselleştirme
+# ========================
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.15.0
+kaleido>=1.0.0        # plotly statik görsel dışa aktarımı (write_image)
+
+# ========================
+# Dashboard
+# ========================
+dash>=2.10.0
+dash-bootstrap-components>=1.0.0
+dash-iconify>=0.1.0
+
+# ========================
+# Model Saklama & Yardımcı
+# ========================
+joblib>=1.3.0
+tqdm>=4.65.0          # ilerleme çubukları (create_ablation_nb.py)
+
+# ========================
+# Jupyter
+# ========================
+jupyter>=1.0.0
+notebook>=7.0.0
+ipykernel>=6.25.0
+shap
+nbformat
+
+# ========================
+# Test
+# ========================
+pytest>=7.4.0         # birim testleri (tests/)

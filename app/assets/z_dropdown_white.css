@@ -1,0 +1,106 @@
+/* Cache-busting filename: z_dropdown_white.css */
+/* Dash Dropdown Theme - High Contrast White Box */
+
+.Select-control {
+    background: #FFFFFF !important; 
+    border: 1px solid #334155 !important; 
+    border-radius: 0 !important;
+    color: #000000 !important; 
+    cursor: pointer !important;
+    min-height: 38px !important; 
+    transition: all 0.2s ease !important;
+}
+
+.Select-control:hover {
+    border-color: #475569 !important; 
+}
+
+.Select, .custom-dropdown, .shap-dropdown {
+    background-color: transparent !important;
+}
+
+.is-open .Select-control {
+    background: #FFFFFF !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.has-value.Select--single > .Select-control .Select-value {
+    background-color: transparent !important;
+    color: #000000 !important;
+}
+
+.Select-value-label {
+    color: #000000 !important;
+    font-weight: 500 !important; 
+    font-size: 14px !important;
+    line-height: 36px !important; 
+}
+
+.Select-placeholder {
+    color: #64748B !important;
+    line-height: 36px !important; 
+}
+
+.Select-menu-outer {
+    background-color: #FFFFFF !important;
+    border: 1px solid #334155 !important;
+    border-top: none !important;
+    border-bottom-left-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5) !important;
+    z-index: 9999 !important;
+    margin-top: -1px !important; 
+}
+
+.Select-menu {
+    max-height: 250px !important;
+}
+
+.Select-option {
+    background-color: #FFFFFF !important;
+    color: #334155 !important;
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+    border-bottom: 1px solid #1E293B !important;
+}
+
+.Select-option.is-focused, 
+.Select-option.is-selected {
+    background-color: #E2E8F0 !important; 
+    color: #000000 !important;
+    cursor: pointer !important;
+    font-weight: bold !important;
+}
+
+.Select-clear-zone {
+    color: #475569 !important;
+    background-color: transparent !important;
+    padding-right: 5px !important;
+}
+.Select-clear-zone:hover {
+    color: #EF4444 !important; 
+}
+
+.Select-arrow-zone {
+    background-color: transparent !important;
+    width: 30px !important;
+    padding-right: 0 !important;
+}
+
+.Select-arrow {
+    border-color: #64748B transparent transparent !important; 
+}
+.is-open .Select-arrow {
+    border-color: transparent transparent #64748B !important;
+}
+
+.Select-input {
+    background-color: transparent !important;
+    height: 36px !important;
+}
+.Select-input > input {
+    color: #000000 !important;
+    line-height: 24px !important;
+    padding: 6px 0 !important;
+}
